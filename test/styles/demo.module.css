@@ -1,0 +1,13 @@
+.button {
+  padding: 8px 16px;
+  background: blue;
+}
+.primary {
+  font-weight: bold;
+}
+.ghost {
+  color: red;
+}
+.phantom {
+  display: none;
+}
