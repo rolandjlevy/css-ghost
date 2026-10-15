@@ -2,13 +2,19 @@ import { relative } from 'path';
 import { loadConfig } from './setup.js';
 
 const OPENROUTER_URL = 'https://openrouter.ai/api/v1/chat/completions';
-const MODEL = 'qwen/qwen3-8b:free';
+const DEFAULT_MODEL = 'nvidia/nemotron-3.5-lightning:free';
 
 function getApiKey() {
-  // Env var takes priority over saved config
   if (process.env.OPENROUTER_API_KEY) return process.env.OPENROUTER_API_KEY;
   const config = loadConfig();
   return config.openrouterApiKey || null;
+}
+
+function getModel() {
+  // Allow override via env var or saved config
+  if (process.env.OPENROUTER_MODEL) return process.env.OPENROUTER_MODEL;
+  const config = loadConfig();
+  return config.openrouterModel || DEFAULT_MODEL;
 }
 
 function buildPrompt(results) {
@@ -41,7 +47,8 @@ export async function getAiSummary(results) {
     return null;
   }
 
-  console.log('🤖 Generating AI summary...\n');
+  const model = getModel();
+  console.log(`🤖 Generating AI summary (${model})...\n`);
 
   try {
     const response = await fetch(OPENROUTER_URL, {
@@ -53,7 +60,7 @@ export async function getAiSummary(results) {
         'X-Title': 'css-ghost',
       },
       body: JSON.stringify({
-        model: MODEL,
+        model,
         messages: [{ role: 'user', content: buildPrompt(results) }],
         max_tokens: 300,
       }),
