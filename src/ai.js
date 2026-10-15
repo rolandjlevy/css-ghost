@@ -2,7 +2,7 @@ import { relative } from 'path';
 import { loadConfig } from './setup.js';
 
 const OPENROUTER_URL = 'https://openrouter.ai/api/v1/chat/completions';
-const MODEL = 'openrouter/auto';
+const MODEL = 'qwen/qwen3-8b:free';
 
 function getApiKey() {
   // Env var takes priority over saved config
@@ -66,7 +66,11 @@ export async function getAiSummary(results) {
     }
 
     const data = await response.json();
-    return data.choices?.[0]?.message?.content?.trim() ?? null;
+    const content = data.choices?.[0]?.message?.content?.trim() ?? null;
+    if (!content) {
+      console.warn(`⚠️  AI summary returned empty response. Model: ${data.model ?? MODEL}\n`);
+    }
+    return content;
 
   } catch (e) {
     console.warn(`⚠️  AI summary failed: ${e.message}\n`);
