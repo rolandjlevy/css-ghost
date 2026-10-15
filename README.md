@@ -14,10 +14,13 @@ Scans one or more directories for style files, extracts every class selector def
 - `className="foo"`
 - `className={styles.foo}`
 - `styles['foo']`
+- `styles[condition ? 'foo' : 'bar']` — both branches extracted
 - `cx('foo')`, `clsx('foo')`, `classnames('foo')`
+- `cx({ active: isOn, disabled: true })` — object keys extracted
+- `cx(['foo', condition && 'bar'])` — array string literals extracted
 
 **Dynamic class detection:**
-Files containing `styles[variable]` or template literal class names are flagged with a ⚠️ warning — results for those files may be incomplete.
+Patterns where the class name is truly unknowable at parse time — `styles[variable]` or template literals containing `${}` — are flagged with a ⚠️ warning. All statically resolvable patterns (string literals, ternaries, object keys) are analysed without warnings.
 
 ## Install
 

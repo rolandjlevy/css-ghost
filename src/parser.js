@@ -135,23 +135,42 @@ export function extractUsages(content) {
     used.add(m[1]);
   }
 
-  // styles[variable] — dynamic, flag it
-  if (/styles?\[(?!['"])/.test(content)) {
+  // styles[condition ? 'foo' : 'bar'] — ternary with string literals: extract both branches
+  const ternaryBracketRegex = /styles?\[\s*[^?]+\?\s*['"]([a-zA-Z_$][a-zA-Z0-9_$]*)["']\s*:\s*['"]([a-zA-Z_$][a-zA-Z0-9_$]*)["']\s*\]/g;
+  while ((m = ternaryBracketRegex.exec(content)) !== null) {
+    used.add(m[1]);
+    used.add(m[2]);
+  }
+
+  // styles[variable] — truly dynamic (not a string literal or ternary): flag it
+  const trulyDynamicBracket = /styles?\[(?!['"])(?![^?]+\?\s*['"])/;
+  if (trulyDynamicBracket.test(content)) {
     hasDynamic = true;
   }
 
   // cx('foo', 'bar') / clsx('foo') / classnames('foo')
-  const cxRegex = /(?:cx|clsx|classnames)\s*\(([^)]+)\)/g;
+  // Also handles object syntax: cx({ active: isOn, disabled: true })
+  // and array syntax: cx(['foo', condition && 'bar'])
+  const cxRegex = /(?:cx|clsx|classnames)\s*\(([\s\S]*?)\)/g;
   while ((m = cxRegex.exec(content)) !== null) {
     const inner = m[1];
+
+    // String literals: 'foo' or "foo"
     const strRegex = /['"]([a-zA-Z_-][a-zA-Z0-9_-]*)["']/g;
     let sm;
     while ((sm = strRegex.exec(inner)) !== null) {
       used.add(sm[1]);
     }
+
+    // Object keys: { active: ..., disabled: ... }
+    const objKeyRegex = /^\s*([a-zA-Z_$][a-zA-Z0-9_$]*)\s*:/gm;
+    while ((sm = objKeyRegex.exec(inner)) !== null) {
+      used.add(sm[1]);
+    }
   }
 
-  // Template literal dynamic class names
+  // Template literal dynamic class names — flag only if truly dynamic (has ${})
+  // But first extract any static styles.foo refs inside them (already caught above by dotRegex)
   if (/`[^`]*\$\{[^}]+\}[^`]*`/.test(content)) {
     hasDynamic = true;
   }
