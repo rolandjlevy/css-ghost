@@ -22,8 +22,7 @@
         "editor.wordWrap": "on",
         "terminal.integrated.defaultProfile.linux": "bash",
         "files.exclude": {
-          "node_modules": true,
-          "orphan-report.md": true
+          "node_modules": true
         }
       }
     }
