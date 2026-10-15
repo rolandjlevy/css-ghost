@@ -8,7 +8,7 @@
   },
   "scripts": {
     "start": "node bin/css-ghost.js",
-    "test": "node bin/css-ghost.js ./test"
+    "scan": "node bin/css-ghost.js ./test"
   },
   "files": [
     "bin",
