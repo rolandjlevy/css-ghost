@@ -1,0 +1,4 @@
+node_modules/
+orphan-report.md
+*.log
+.DS_Store
