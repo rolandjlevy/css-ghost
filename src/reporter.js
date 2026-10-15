@@ -89,13 +89,12 @@ export function generateReport(results, outputPath = 'orphan-report.md') {
   writeFileSync(outputPath, content, 'utf-8');
 
   // Console output — also print orphans inline
-  console.log(`✅ Report written to ${outputPath}`);
-  console.log(`📊 ${totalOrphaned} orphaned selector${totalOrphaned !== 1 ? 's' : ''} across ${filesWithOrphans} file${filesWithOrphans !== 1 ? 's' : ''}\n`);
+  console.log(`📊 ${totalOrphaned} orphaned selector${totalOrphaned !== 1 ? 's' : ''} in ${filesWithOrphans} file${filesWithOrphans !== 1 ? 's' : ''}. See: ${outputPath}\n`);
 
   for (const result of results) {
     if (result.orphaned.length === 0) continue;
     const relPath = relative(process.cwd(), result.filePath);
-    console.log(`📄 ${relPath}`);
+    console.log(`✅ ${relPath}\n`);
     result.orphaned.forEach(({ name, line, rule }) => {
       console.log(`   👻 .${name} (line ${line})`);
       if (rule) {
@@ -105,6 +104,4 @@ export function generateReport(results, outputPath = 'orphan-report.md') {
       console.log('');
     });
   }
-
-  console.log(`📁 ${results.length} style file${results.length !== 1 ? 's' : ''} scanned\n`);
 }
