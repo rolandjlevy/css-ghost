@@ -87,6 +87,35 @@ Generates a markdown report (`orphan-report.md` by default):
 
 Built with Node.js built-ins only (`fs`, `path`). No npm packages required.
 
+## Origin — built with OpenRouter free models via Claude Code
+
+This tool was created as a test project to explore [using OpenRouter's free model tier with Claude Code](https://www.mindstudio.ai/blog/open-router-free-models-claude-code-cost-reduction) as a way to cut AI development costs.
+
+Claude Code normally calls Anthropic's API directly. By overriding two environment variables you can route it through OpenRouter's free tier instead — meaning you can run agentic coding sessions at no cost using models like Llama 3.3 70B or Deepseek R1.
+
+### Setup
+
+Get a free API key at [openrouter.ai/keys](https://openrouter.ai/keys), then add these aliases to your `~/.zshrc`:
+
+```bash
+# Store your key once
+export OPENROUTER_API_KEY="sk-or-v1-YOUR_KEY"
+
+# Llama 3.3 70B — fast, capable, free
+alias claude-free='ANTHROPIC_BASE_URL="https://openrouter.ai/api/v1" \
+  ANTHROPIC_API_KEY="$OPENROUTER_API_KEY" \
+  claude --model "meta-llama/llama-3.3-70b-instruct:free"'
+
+# Deepseek R1 — strongest free option for reasoning and debugging
+alias claude-r1='ANTHROPIC_BASE_URL="https://openrouter.ai/api/v1" \
+  ANTHROPIC_API_KEY="$OPENROUTER_API_KEY" \
+  claude --model "deepseek/deepseek-r1:free"'
+```
+
+Then `source ~/.zshrc`. Use `claude-free` or `claude-r1` in place of `claude` to start a free session.
+
+> **Note:** Free tier models handle Claude Code's tool call format well in practice, but run a quick agentic task first to confirm file read/edit/bash loops work end to end in your environment before committing to it for serious work.
+
 ## License
 
 MIT
