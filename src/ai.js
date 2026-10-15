@@ -2,7 +2,7 @@ import { relative } from 'path';
 import { loadConfig } from './setup.js';
 
 const OPENROUTER_URL = 'https://openrouter.ai/api/v1/chat/completions';
-const MODEL = 'google/gemma-4-31b-it:free';
+const MODEL = 'openrouter/auto';
 
 function getApiKey() {
   // Env var takes priority over saved config
