@@ -22,6 +22,22 @@ Scans one or more directories for style files, extracts every class selector def
 **Dynamic class detection:**
 Patterns where the class name is truly unknowable at parse time — `styles[variable]` or template literals containing `${}` — are flagged with a ⚠️ warning. All statically resolvable patterns (string literals, ternaries, object keys) are analysed without warnings.
 
+## To enable AI features
+
+css-ghost can generate a plain English summary of your orphaned selectors using a free [OpenRouter](https://openrouter.ai) API key. Run the setup wizard once:
+
+```bash
+css-ghost --setup
+```
+
+It will prompt you to paste your key (free at [openrouter.ai/keys](https://openrouter.ai/keys)) and save it to `~/.css-ghost`. Then pass `--ai` to any scan:
+
+```bash
+css-ghost ./src --ai
+```
+
+The AI summary appears in both the terminal output and the markdown report. The core scan always runs without a key — `--ai` is entirely optional.
+
 ## Install
 
 ```bash
@@ -45,6 +61,8 @@ css-ghost <directory> [directory2] ... [options]
 | Flag | Description | Default |
 | --- | --- | --- |
 | `--output <file>` | Output report file path | `orphan-report.md` |
+| `--ai` | Append an AI-generated summary (requires setup) | off |
+| `--setup` | Save your OpenRouter API key for `--ai` | — |
 | `-h, --help` | Show help | — |
 
 ## Examples
@@ -55,6 +73,9 @@ css-ghost ./src
 
 # Scan multiple directories
 css-ghost ./src ./components ./pages
+
+# With AI summary
+css-ghost ./src --ai
 
 # Write report to a custom path
 css-ghost ./src --output ./reports/css-audit.md

@@ -1,7 +1,7 @@
 import { writeFileSync } from 'fs';
 import { relative } from 'path';
 
-export function generateReport(results, outputPath = 'orphan-report.md') {
+export function generateReport(results, outputPath = 'orphan-report.md', aiSummary = null) {
   let totalDefined = 0;
   let totalOrphaned = 0;
   let filesWithOrphans = 0;
@@ -85,11 +85,20 @@ export function generateReport(results, outputPath = 'orphan-report.md') {
     '',
   ].join('\n');
 
-  const content = summary + sections.join('');
+  const aiBlock = aiSummary
+    ? `## 🤖 AI Summary\n\n${aiSummary}\n\n---\n\n`
+    : '';
+
+  const content = summary + aiBlock + sections.join('');
   writeFileSync(outputPath, content, 'utf-8');
 
   // Console output — also print orphans inline
   console.log(`📊 ${totalOrphaned} orphaned selector${totalOrphaned !== 1 ? 's' : ''} in ${filesWithOrphans} file${filesWithOrphans !== 1 ? 's' : ''}. See: ${outputPath}\n`);
+
+  if (aiSummary) {
+    console.log(`🤖 AI summary\n`);
+    console.log(`   ${aiSummary.split('\n').join('\n   ')}\n`);
+  }
 
   for (const result of results) {
     if (result.orphaned.length === 0) continue;

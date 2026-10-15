@@ -4,8 +4,16 @@ import { resolve } from 'path';
 import { existsSync as fsExists } from 'fs';
 import { scan } from '../src/scanner.js';
 import { generateReport } from '../src/reporter.js';
+import { runSetup } from '../src/setup.js';
+import { getAiSummary } from '../src/ai.js';
 
 const args = process.argv.slice(2);
+
+// --setup
+if (args.includes('--setup')) {
+  await runSetup();
+  process.exit(0);
+}
 
 if (args.length === 0 || args.includes('--help') || args.includes('-h')) {
   console.log(`
@@ -16,17 +24,21 @@ Usage:
 
 Options:
   --output <file>   Output report file path (default: orphan-report.md)
+  --ai              Append an AI-generated summary to the report
+  --setup           Save your OpenRouter API key for use with --ai
   -h, --help        Show this help message
 
 Examples:
   css-ghost ./src
   css-ghost ./src ./components
+  css-ghost ./src --ai
   css-ghost ./src --output ./reports/css-audit.md
 `);
   process.exit(0);
 }
 
-// Parse --output flag
+// Parse flags
+const useAi = args.includes('--ai');
 const outputIdx = args.indexOf('--output');
 const outputPath = outputIdx !== -1 ? args[outputIdx + 1] : 'orphan-report.md';
 
@@ -35,8 +47,10 @@ if (outputIdx !== -1 && !outputPath) {
   process.exit(1);
 }
 
-// Remaining args are directories
-const rawDirs = args.filter((a, i) => !a.startsWith('--') && (outputIdx === -1 || i !== outputIdx + 1));
+// Remaining args are directories (strip flags and their values)
+const rawDirs = args.filter((a, i) =>
+  !a.startsWith('--') && (outputIdx === -1 || i !== outputIdx + 1)
+);
 
 if (rawDirs.length === 0) {
   console.error('❌ At least one directory is required');
@@ -65,4 +79,7 @@ if (results.length === 0) {
   process.exit(0);
 }
 
-generateReport(results, outputPath);
+// Get AI summary before writing report (so it can be included in the .md)
+const aiSummary = useAi ? await getAiSummary(results) : null;
+
+generateReport(results, outputPath, aiSummary);
