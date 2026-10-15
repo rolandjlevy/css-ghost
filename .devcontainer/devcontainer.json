@@ -1,0 +1,35 @@
+{
+  "name": "css-ghost",
+  "image": "mcr.microsoft.com/devcontainers/javascript-node:20",
+
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode",
+        "GitHub.github-vscode-theme",
+        "christian-kohler.path-intellisense",
+        "streetsidesoftware.code-spell-checker"
+      ],
+      "settings": {
+        "workbench.colorTheme": "GitHub Dark Dimmed",
+        "workbench.iconTheme": "vs-seti",
+        "editor.fontSize": 14,
+        "editor.tabSize": 2,
+        "editor.formatOnSave": true,
+        "editor.defaultFormatter": "esbenp.prettier-vscode",
+        "editor.minimap.enabled": false,
+        "editor.wordWrap": "on",
+        "terminal.integrated.defaultProfile.linux": "bash",
+        "files.exclude": {
+          "node_modules": true,
+          "orphan-report.md": true
+        }
+      }
+    }
+  },
+
+  "postCreateCommand": "echo '👻 css-ghost dev container ready. Run: node bin/css-ghost.js --help'",
+
+  "remoteUser": "node"
+}
