@@ -2,7 +2,14 @@ import { relative } from 'path';
 import { loadConfig } from './setup.js';
 
 const OPENROUTER_URL = 'https://openrouter.ai/api/v1/chat/completions';
-const DEFAULT_MODEL = 'nvidia/nemotron-3.5-lightning:free';
+// Fallback chain — tried in order until one returns a response
+const FREE_MODELS = [
+  'nvidia/nemotron-3.5-lightning:free',
+  'google/gemma-4-31b-it:free',
+  'qwen/qwen3.8-27b:free',
+  'thinkingmachines/inkling:free',
+  'nvidia/nemotron-3-super-120b-a12b:free',
+];
 
 function getApiKey() {
   if (process.env.OPENROUTER_API_KEY) return process.env.OPENROUTER_API_KEY;
@@ -10,11 +17,31 @@ function getApiKey() {
   return config.openrouterApiKey || null;
 }
 
-function getModel() {
-  // Allow override via env var or saved config
+function getModelOverride() {
   if (process.env.OPENROUTER_MODEL) return process.env.OPENROUTER_MODEL;
   const config = loadConfig();
-  return config.openrouterModel || DEFAULT_MODEL;
+  return config.openrouterModel || null;
+}
+
+async function tryModel(model, key, prompt) {
+  const response = await fetch(OPENROUTER_URL, {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${key}`,
+      'Content-Type': 'application/json',
+      'HTTP-Referer': 'https://github.com/rolandjlevy/css-ghost',
+      'X-Title': 'css-ghost',
+    },
+    body: JSON.stringify({
+      model,
+      messages: [{ role: 'user', content: prompt }],
+      max_tokens: 300,
+    }),
+  });
+
+  if (!response.ok) return null;
+  const data = await response.json();
+  return data.choices?.[0]?.message?.content?.trim() || null;
 }
 
 function buildPrompt(results) {
@@ -47,40 +74,21 @@ export async function getAiSummary(results) {
     return null;
   }
 
-  const model = getModel();
-  console.log(`🤖 Generating AI summary (${model})...\n`);
+  const override = getModelOverride();
+  const models = override ? [override] : FREE_MODELS;
+  const prompt = buildPrompt(results);
 
-  try {
-    const response = await fetch(OPENROUTER_URL, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${key}`,
-        'Content-Type': 'application/json',
-        'HTTP-Referer': 'https://github.com/rolandjlevy/css-ghost',
-        'X-Title': 'css-ghost',
-      },
-      body: JSON.stringify({
-        model,
-        messages: [{ role: 'user', content: buildPrompt(results) }],
-        max_tokens: 300,
-      }),
-    });
+  console.log('🤖 Generating AI summary...\n');
 
-    if (!response.ok) {
-      const err = await response.text();
-      console.warn(`⚠️  AI summary failed (${response.status}): ${err}\n`);
-      return null;
+  for (const model of models) {
+    try {
+      const content = await tryModel(model, key, prompt);
+      if (content) return content;
+    } catch {
+      // try next model
     }
-
-    const data = await response.json();
-    const content = data.choices?.[0]?.message?.content?.trim() ?? null;
-    if (!content) {
-      console.warn(`⚠️  AI summary returned empty response. Model: ${data.model ?? MODEL}\n`);
-    }
-    return content;
-
-  } catch (e) {
-    console.warn(`⚠️  AI summary failed: ${e.message}\n`);
-    return null;
   }
+
+  console.warn('⚠️  AI summary unavailable — all free models failed or returned empty responses.\n');
+  return null;
 }
