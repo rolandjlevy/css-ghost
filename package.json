@@ -1,0 +1,15 @@
+{
+  "name": "css-ghost",
+  "version": "1.0.0",
+  "description": "Find orphaned CSS class selectors in your codebase",
+  "type": "module",
+  "bin": {
+    "css-ghost": "./bin/css-ghost.js"
+  },
+  "scripts": {
+    "start": "node bin/css-ghost.js"
+  },
+  "keywords": ["css", "orphan", "unused", "selectors", "cli", "linter"],
+  "author": "Roland Levy",
+  "license": "MIT"
+}
