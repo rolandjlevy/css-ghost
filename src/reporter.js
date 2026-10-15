@@ -43,10 +43,18 @@ export function generateReport(results, outputPath = 'orphan-report.md') {
     }
 
     if (hasOrphans) {
-      lines.push('**Orphaned selectors:**');
-      lines.push('');
-      orphaned.forEach(s => lines.push(`- \`.${s}\``));
-      lines.push('');
+      lines.push('### 👻 Orphaned selectors\n');
+
+      orphaned.forEach(({ name, line, rule }) => {
+        lines.push(`#### \`.${name}\` — line ${line}`);
+        lines.push('');
+        if (rule) {
+          lines.push('```css');
+          lines.push(rule);
+          lines.push('```');
+        }
+        lines.push('');
+      });
     }
 
     lines.push('---');
@@ -80,7 +88,23 @@ export function generateReport(results, outputPath = 'orphan-report.md') {
   const content = summary + sections.join('');
   writeFileSync(outputPath, content, 'utf-8');
 
+  // Console output — also print orphans inline
   console.log(`✅ Report written to ${outputPath}`);
-  console.log(`📊 ${totalOrphaned} orphaned selector${totalOrphaned !== 1 ? 's' : ''} across ${filesWithOrphans} file${filesWithOrphans !== 1 ? 's' : ''}`);
+  console.log(`📊 ${totalOrphaned} orphaned selector${totalOrphaned !== 1 ? 's' : ''} across ${filesWithOrphans} file${filesWithOrphans !== 1 ? 's' : ''}\n`);
+
+  for (const result of results) {
+    if (result.orphaned.length === 0) continue;
+    const relPath = relative(process.cwd(), result.filePath);
+    console.log(`📄 ${relPath}`);
+    result.orphaned.forEach(({ name, line, rule }) => {
+      console.log(`   👻 .${name} (line ${line})`);
+      if (rule) {
+        const preview = rule.split('\n').slice(0, 4).join('\n');
+        console.log(preview.split('\n').map(l => `      ${l}`).join('\n'));
+      }
+      console.log('');
+    });
+  }
+
   console.log(`📁 ${results.length} style file${results.length !== 1 ? 's' : ''} scanned\n`);
 }

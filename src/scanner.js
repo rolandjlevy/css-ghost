@@ -55,7 +55,10 @@ export function scan(dirs) {
   for (const styleFile of styleFiles) {
     try {
       const { selectors, hasDynamic } = parseStyleFile(styleFile);
-      const orphaned = [...selectors].filter(s => !globalUsed.has(s));
+      // selectors is now a Map: name → { line, rule }
+      const orphaned = [...selectors.entries()]
+        .filter(([name]) => !globalUsed.has(name))
+        .map(([name, meta]) => ({ name, ...meta }));
 
       results.push({
         filePath: styleFile,
