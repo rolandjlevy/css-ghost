@@ -61,7 +61,8 @@ css-ghost ./src --output ./reports/css-audit.md
 
 Generates a markdown report (`orphan-report.md` by default):
 
-```markdown
+---
+
 # 👻 css-ghost — Orphaned Selector Report
 
 ## Summary
@@ -81,7 +82,8 @@ Generates a markdown report (`orphan-report.md` by default):
 **Orphaned selectors:**
 - `.iconLeft`
 - `.loadingSpinner`
-```
+
+---
 
 ## No dependencies
 
