@@ -4,10 +4,11 @@
   "description": "Find orphaned CSS class selectors in your codebase",
   "type": "module",
   "bin": {
-    "css-ghost": "./bin/css-ghost.js"
+    "css-ghost": "bin/css-ghost.js"
   },
   "scripts": {
-    "start": "node bin/css-ghost.js"
+    "start": "node bin/css-ghost.js",
+    "scan": "node bin/css-ghost.js"
   },
   "files": [
     "bin",
