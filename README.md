@@ -4,7 +4,7 @@ Find orphaned CSS class selectors in your codebase — defined in style files bu
 
 ## What it does
 
-Scans one or more directories for style files, extracts every class selector defined, then cross-references them against usages in your component files. Anything defined but never used is reported as an orphan.
+Scans one or more directories for style files, extracts every class selector defined, then cross-references them against usages in your component files. Anything defined but never used is reported as an orphan — with its line number and the actual CSS printed inline.
 
 **Supported style files:**
 - `.css`, `.module.css`, `.scss`, `.sass`, `.less`
@@ -22,13 +22,13 @@ Files containing `styles[variable]` or template literal class names are flagged 
 ## Install
 
 ```bash
-npm install -g css-ghost
+npm install -g @rolandjlevy/css-ghost
 ```
 
-Or run directly without installing:
+Or run without installing:
 
 ```bash
-npx css-ghost ./src
+npx @rolandjlevy/css-ghost ./src
 ```
 
 ## Usage
@@ -47,43 +47,94 @@ css-ghost <directory> [directory2] ... [options]
 ## Examples
 
 ```bash
-# Scan a single directory
+# Scan your src folder
 css-ghost ./src
 
 # Scan multiple directories
 css-ghost ./src ./components ./pages
 
-# Custom output path
+# Write report to a custom path
 css-ghost ./src --output ./reports/css-audit.md
 ```
 
-## Output
+## CLI output
 
-Generates a markdown report (`orphan-report.md` by default):
+Running `css-ghost ./src` prints a live summary to your terminal:
+
+```
+✅ Report written to orphan-report.md
+📊 3 orphaned selectors across 1 file
+
+📄 src/components/Button/Button.module.css
+   👻 .iconLeft (line 4)
+      .iconLeft {
+        margin-right: 6px;
+        flex-shrink: 0;
+      }
+
+   👻 .loadingSpinner (line 12)
+      .loadingSpinner {
+        animation: spin 0.8s linear infinite;
+      }
+
+   👻 .disabled (line 18)
+      .disabled {
+        opacity: 0.4;
+        pointer-events: none;
+      }
+
+📁 1 style file scanned
+```
+
+Each orphan shows:
+- the selector name and the **exact line number** where it's defined
+- the **full CSS rule** so you can see what it does before deciding to delete it
+
+## Markdown report
+
+A full report is also written to `orphan-report.md` (or your `--output` path):
 
 ---
 
-# 👻 css-ghost — Orphaned Selector Report
+### 👻 Orphaned selectors
 
-## Summary
-| Metric | Value |
-| --- | --- |
-| Style files scanned | 12 |
-| Total selectors defined | 84 |
-| Total orphaned selectors | 7 |
-| Files with orphans | 3 |
-| Overall unused rate | 8% |
+#### `.iconLeft` — line 4
 
-## `src/components/Button/Button.module.css`
-| Defined | Orphaned | Unused % |
-| --- | --- | --- |
-| 6 | 2 | 33% |
+```css
+.iconLeft {
+  margin-right: 6px;
+  flex-shrink: 0;
+}
+```
 
-**Orphaned selectors:**
-- `.iconLeft`
-- `.loadingSpinner`
+#### `.loadingSpinner` — line 12
+
+```css
+.loadingSpinner {
+  animation: spin 0.8s linear infinite;
+}
+```
 
 ---
+
+## Using with npm scripts
+
+If you're working inside the project itself, add a `scan` script to `package.json`:
+
+```json
+"scripts": {
+  "scan": "css-ghost ./src"
+}
+```
+
+Then run:
+
+```bash
+npm run scan
+
+# Pass extra args with --
+npm run scan -- --output ./reports/audit.md
+```
 
 ## No dependencies
 
