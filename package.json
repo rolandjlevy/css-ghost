@@ -8,7 +8,8 @@
   },
   "scripts": {
     "start": "node bin/css-ghost.js",
-    "scan": "node bin/css-ghost.js ./test"
+    "scan": "node bin/css-ghost.js ./test",
+    "setup": "node bin/css-ghost.js --setup"
   },
   "files": [
     "bin",
