@@ -374,10 +374,3 @@ Then `source ~/.zshrc`. Use `claude-free` or `claude-r1` in place of `claude` to
 ## License
 
 MIT
-
-```bash
-  .-.
- (o o)
- | O |
- '~~~'
-```
