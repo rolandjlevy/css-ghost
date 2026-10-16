@@ -63,17 +63,17 @@ css-ghost [directory] [directory2] ... [options]
 
 **Options:**
 
-| Flag                  | Description                                          | Default            |
-| --------------------- | ---------------------------------------------------- | ------------------ |
-| `--output <file>`     | Output report file path                              | `orphan-report.md` |
-| `--delete`            | Delete all orphaned selectors from source files      | off                |
-| `--yes`               | Skip the deletion confirmation prompt                | off                |
-| `--strict`            | Exit with code 1 when any orphans are found (CI use) | off               |
-| `--ghost-trail`       | Show the last git commit that touched each orphan    | off                |
-| `--install-hook`      | Write a pre-commit hook to `.git/hooks/pre-commit`   | —                  |
-| `--ai`                | Append an AI-generated summary (requires setup)      | off                |
-| `--setup`             | Save your OpenRouter API key for `--ai`              | —                  |
-| `-h, --help`          | Show help                                            | —                  |
+| Flag              | Description                                          | Default            |
+| ----------------- | ---------------------------------------------------- | ------------------ |
+| `--output <file>` | Output report file path                              | `orphan-report.md` |
+| `--delete`        | Delete all orphaned selectors from source files      | off                |
+| `--yes`           | Skip the deletion confirmation prompt                | off                |
+| `--strict`        | Exit with code 1 when any orphans are found (CI use) | off                |
+| `--ghost-trail`   | Show the last git commit that touched each orphan    | off                |
+| `--install-hook`  | Write a pre-commit hook to `.git/hooks/pre-commit`   | —                  |
+| `--ai`            | Append an AI-generated summary (requires setup)      | off                |
+| `--setup`         | Save your OpenRouter API key for `--ai`              | —                  |
+| `-h, --help`      | Show help                                            | —                  |
 
 ## CSS variable orphan detection
 
@@ -375,7 +375,7 @@ Then `source ~/.zshrc`. Use `claude-free` or `claude-r1` in place of `claude` to
 
 MIT
 
-```
+```bash
   .-.
  (o o)
  | O |
