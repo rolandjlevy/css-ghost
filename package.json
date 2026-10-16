@@ -1,6 +1,6 @@
 {
   "name": "@rolandjlevy/css-ghost",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Find orphaned CSS class selectors in your codebase",
   "type": "module",
   "bin": {
@@ -37,5 +37,8 @@
   "homepage": "https://github.com/rolandjlevy/css-ghost#readme",
   "engines": {
     "node": ">=18"
+  },
+  "dependencies": {
+    "picocolors": "^1.1.1"
   }
 }

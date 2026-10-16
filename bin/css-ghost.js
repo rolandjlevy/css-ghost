@@ -15,12 +15,14 @@ if (args.includes('--setup')) {
   process.exit(0);
 }
 
-if (args.length === 0 || args.includes('--help') || args.includes('-h')) {
+if (args.includes('--help') || args.includes('-h')) {
   console.log(`
 👻 css-ghost — Find orphaned CSS class selectors
 
 Usage:
-  css-ghost <directory> [directory2] ... [options]
+  css-ghost [directory] [directory2] ... [options]
+
+  When no directory is given, an interactive folder picker opens.
 
 Options:
   --output <file>   Output report file path (default: orphan-report.md)
@@ -29,6 +31,7 @@ Options:
   -h, --help        Show this help message
 
 Examples:
+  css-ghost                        # interactive folder picker
   css-ghost ./src
   css-ghost ./src ./components
   css-ghost ./src --ai
@@ -52,20 +55,23 @@ const rawDirs = args.filter((a, i) =>
   !a.startsWith('--') && (outputIdx === -1 || i !== outputIdx + 1)
 );
 
+// No directories given → launch interactive picker
+let dirs;
 if (rawDirs.length === 0) {
-  console.error('❌ At least one directory is required');
-  process.exit(1);
-}
-
-// Validate directories exist
-const dirs = [];
-for (const d of rawDirs) {
-  const resolved = resolve(d);
-  if (!fsExists(resolved)) {
-    console.error(`❌ Directory not found: ${d}`);
-    process.exit(1);
+  const { pickDirectories } = await import('../src/picker.js');
+  dirs = await pickDirectories();
+  console.log('');
+} else {
+  // Validate provided directories exist
+  dirs = [];
+  for (const d of rawDirs) {
+    const resolved = resolve(d);
+    if (!fsExists(resolved)) {
+      console.error(`❌ Directory not found: ${d}`);
+      process.exit(1);
+    }
+    dirs.push(resolved);
   }
-  dirs.push(resolved);
 }
 
 console.log(`\n👻 css-ghost scanning ${dirs.length} director${dirs.length === 1 ? 'y' : 'ies'}...`);

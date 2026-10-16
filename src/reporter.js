@@ -1,5 +1,6 @@
 import { writeFileSync } from 'fs';
 import { relative } from 'path';
+import pc from 'picocolors';
 
 function minifyCss(css) {
   return css
@@ -126,12 +127,14 @@ export function generateReport(results, outputPath = 'orphan-report.md', aiSumma
   writeFileSync(outputPath, content, 'utf-8');
 
   // Console output — also print orphans inline
-  console.log(`📊 ${totalOrphaned} orphaned selector${totalOrphaned !== 1 ? 's' : ''} in ${filesWithOrphans} file${filesWithOrphans !== 1 ? 's' : ''}. See: ${outputPath}`);
-  if (totalMin > 0) console.log(`💾 Potential savings: ${formatBytes(totalMin)} minified\n`);
+  const orphanCount = `${pc.bold(pc.yellow(totalOrphaned))} orphaned selector${totalOrphaned !== 1 ? 's' : ''}`;
+  const fileCount   = `${pc.bold(filesWithOrphans)} file${filesWithOrphans !== 1 ? 's' : ''}`;
+  console.log(`📊 ${orphanCount} in ${fileCount}. See: ${pc.cyan(outputPath)}`);
+  if (totalMin > 0) console.log(`💾 Potential savings: ${pc.green(formatBytes(totalMin))} minified\n`);
   else console.log('');
 
   if (aiSummary) {
-    console.log(`🤖 AI summary\n`);
+    console.log(`🤖 ${pc.bold('AI summary')}\n`);
     console.log(`   ${aiSummary.split('\n').join('\n   ')}\n`);
   }
 
@@ -139,13 +142,15 @@ export function generateReport(results, outputPath = 'orphan-report.md', aiSumma
     if (result.orphaned.length === 0) continue;
     const relPath = relative(process.cwd(), result.filePath);
     const s = calcSavings(result.orphaned.map(o => o.rule).filter(Boolean));
-    const savingsSuffix = s.raw > 0 ? ` — saves ~${formatBytes(s.raw)} (${formatBytes(s.min)} minified)` : '';
-    console.log(`✅ ${relPath}${savingsSuffix}\n`);
+    const savingsSuffix = s.raw > 0
+      ? pc.dim(` — saves ~${formatBytes(s.raw)} (${formatBytes(s.min)} minified)`)
+      : '';
+    console.log(`✅ ${pc.bold(relPath)}${savingsSuffix}\n`);
     result.orphaned.forEach(({ name, line, rule }) => {
-      console.log(`   👻 .${name} (line ${line})`);
+      console.log(`   👻 ${pc.yellow('.' + name)} ${pc.dim(`(line ${line})`)}`);
       if (rule) {
         const preview = rule.split('\n').slice(0, 4).join('\n');
-        console.log(preview.split('\n').map(l => `      ${l}`).join('\n'));
+        console.log(preview.split('\n').map(l => `      ${pc.dim(l)}`).join('\n'));
       }
       console.log('');
     });

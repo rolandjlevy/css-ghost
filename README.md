@@ -56,7 +56,24 @@ npx @rolandjlevy/css-ghost ./src
 ## Usage
 
 ```bash
-css-ghost <directory> [directory2] ... [options]
+css-ghost [directory] [directory2] ... [options]
+```
+
+Running `css-ghost` with **no arguments** opens an interactive directory picker — navigate with arrow keys, press `a` to add the current folder, and `d` when done:
+
+```
+📂 Directory picker  — navigate into a folder, then press [a] to add it
+
+📍 /home/user/my-project
+
+    📁 components
+  ▶  📁 src
+    📁 styles
+
+✅ Added to scan:
+   /home/user/my-project/src
+
+[↑↓/jk] navigate  [↵/→] enter  [←] parent  [a] add current dir  [d] done  [^C] quit
 ```
 
 **Options:**
@@ -71,6 +88,9 @@ css-ghost <directory> [directory2] ... [options]
 ## Examples
 
 ```bash
+# Interactive folder picker (no args)
+css-ghost
+
 # Scan your src folder
 css-ghost ./src
 
@@ -183,9 +203,9 @@ Reload with `source ~/.zshrc`. This is a one-time fix — it won't be needed aga
 
 > This is common when Node was installed via the official installer rather than nvm or Homebrew.
 
-## No dependencies
+## Dependencies
 
-Built with Node.js built-ins only (`fs`, `path`). No npm packages required.
+One runtime dependency: [`picocolors`](https://github.com/alexeyraspopov/picocolors) for terminal colours. Everything else uses Node.js built-ins (`fs`, `path`, `readline`).
 
 ## Origin — built with OpenRouter free models via Claude Code
 
