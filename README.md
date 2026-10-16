@@ -291,6 +291,7 @@ Running `css-ghost ./src` prints a live summary to your terminal:
       }
 
 📁 1 style file scanned
+💾 Potential savings: 3 selectors removed
 ```
 
 Each orphan shows:
