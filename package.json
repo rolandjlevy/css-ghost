@@ -15,7 +15,8 @@
   "files": [
     "bin",
     "src",
-    "README.md"
+    "README.md",
+    "LICENSE"
   ],
   "keywords": [
     "css",
