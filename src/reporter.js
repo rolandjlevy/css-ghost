@@ -126,7 +126,9 @@ export function generateReport(results, outputPath = 'orphan-report.md', aiSumma
   writeFileSync(outputPath, content, 'utf-8');
 
   // Console output — also print orphans inline
-  console.log(`📊 ${totalOrphaned} orphaned selector${totalOrphaned !== 1 ? 's' : ''} in ${filesWithOrphans} file${filesWithOrphans !== 1 ? 's' : ''}. See: ${outputPath}\n`);
+  console.log(`📊 ${totalOrphaned} orphaned selector${totalOrphaned !== 1 ? 's' : ''} in ${filesWithOrphans} file${filesWithOrphans !== 1 ? 's' : ''}. See: ${outputPath}`);
+  if (totalMin > 0) console.log(`💾 Potential savings: ${formatBytes(totalMin)} minified\n`);
+  else console.log('');
 
   if (aiSummary) {
     console.log(`🤖 AI summary\n`);
