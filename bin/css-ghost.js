@@ -4,6 +4,7 @@ import { resolve } from 'path';
 import { existsSync as fsExists } from 'fs';
 import { scan } from '../src/scanner.js';
 import { generateReport } from '../src/reporter.js';
+import { deleteOrphans } from '../src/deleter.js';
 import { runSetup } from '../src/setup.js';
 import { getAiSummary } from '../src/ai.js';
 
@@ -26,6 +27,8 @@ Usage:
 
 Options:
   --output <file>   Output report file path (default: orphan-report.md)
+  --delete          Delete all orphaned selectors from source files (prompts first)
+  --yes             Skip the deletion confirmation prompt (use with --delete)
   --ai              Append an AI-generated summary to the report
   --setup           Save your OpenRouter API key for use with --ai
   -h, --help        Show this help message
@@ -41,7 +44,9 @@ Examples:
 }
 
 // Parse flags
-const useAi = args.includes('--ai');
+const useAi     = args.includes('--ai');
+const doDelete  = args.includes('--delete');
+const skipConfirm = args.includes('--yes') || args.includes('-y');
 const outputIdx = args.indexOf('--output');
 const outputPath = outputIdx !== -1 ? args[outputIdx + 1] : 'orphan-report.md';
 
@@ -52,7 +57,7 @@ if (outputIdx !== -1 && !outputPath) {
 
 // Remaining args are directories (strip flags and their values)
 const rawDirs = args.filter((a, i) =>
-  !a.startsWith('--') && (outputIdx === -1 || i !== outputIdx + 1)
+  !a.startsWith('-') && (outputIdx === -1 || i !== outputIdx + 1)
 );
 
 // No directories given → launch interactive picker
@@ -89,3 +94,7 @@ if (results.length === 0) {
 const aiSummary = useAi ? await getAiSummary(results) : null;
 
 generateReport(results, outputPath, aiSummary);
+
+if (doDelete) {
+  await deleteOrphans(results, { yes: skipConfirm });
+}

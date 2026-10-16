@@ -1,6 +1,6 @@
 {
   "name": "@rolandjlevy/css-ghost",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "Find orphaned CSS class selectors in your codebase",
   "type": "module",
   "bin": {

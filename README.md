@@ -64,6 +64,8 @@ css-ghost [directory] [directory2] ... [options]
 | Flag | Description | Default |
 | --- | --- | --- |
 | `--output <file>` | Output report file path | `orphan-report.md` |
+| `--delete` | Delete all orphaned selectors from source files | off |
+| `--yes` | Skip the deletion confirmation prompt | off |
 | `--ai` | Append an AI-generated summary (requires setup) | off |
 | `--setup` | Save your OpenRouter API key for `--ai` | — |
 | `-h, --help` | Show help | — |
@@ -98,6 +100,24 @@ Run `css-ghost` with no arguments and an arrow-key picker opens in your terminal
 
 You can add **multiple folders** before pressing `d` — just navigate to each one and press `a`. If you press `d` without adding anything, the folder you're currently browsing is used.
 
+## Deleting orphans
+
+Pass `--delete` after a scan to remove every flagged selector directly from its source file:
+
+```bash
+css-ghost ./src --delete
+```
+
+css-ghost prints the full report first, then lists what will be deleted and asks for confirmation before touching anything. Pass `--yes` to skip the prompt (useful in CI or scripts):
+
+```bash
+css-ghost ./src --delete --yes
+```
+
+Works across all supported file types — `.css`, `.scss`, `.less`, MUI `makeStyles`, and vanilla-extract exports.
+
+> **Tip:** commit or stash your work before running `--delete`. There is no undo.
+
 ## Examples
 
 ```bash
@@ -106,6 +126,12 @@ css-ghost
 
 # Scan your src folder
 css-ghost ./src
+
+# Scan and delete all orphans (with confirmation prompt)
+css-ghost ./src --delete
+
+# Scan and delete without prompting
+css-ghost ./src --delete --yes
 
 # Scan multiple directories
 css-ghost ./src ./components ./pages
