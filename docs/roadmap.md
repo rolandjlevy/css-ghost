@@ -124,6 +124,14 @@ Once the GIF is in the repo (e.g. `docs/demo.gif`):
 
 ---
 
+## ✅ Shipped
+
+- **CSS variable orphan detection** — `--my-token: value` definitions not consumed by any `var(--my-token)` are flagged in a separate 🔮 section in both terminal and markdown output
+- **Ghost trail** — `--ghost-trail` fetches the last git commit that touched each orphan via parallel `git log -S` lookups; class searches are limited to component file types for meaningful results
+- **Pre-commit hook installer** — `css-ghost --install-hook ./src` writes `.git/hooks/pre-commit`; the new `--strict` flag (exit 1 on orphans) powers it and also enables CI integration
+
+---
+
 ## Other Planned Improvements
 
 - **`--watch` mode** — re-run the scan automatically when style or component files change

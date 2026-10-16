@@ -1,16 +1,18 @@
 {
   "name": "@rolandjlevy/css-ghost",
-  "version": "1.0.6",
+  "version": "1.1.0",
   "description": "Find orphaned CSS class selectors in your codebase",
   "type": "module",
   "bin": {
     "css-ghost": "bin/css-ghost.js"
   },
   "scripts": {
-    "setup": "node bin/css-ghost.js --setup",
     "start": "node bin/css-ghost.js",
+    "scan": "node bin/css-ghost.js ./test",
+    "scan:trail": "node bin/css-ghost.js ./test --ghost-trail",
     "delete": "node bin/css-ghost.js ./test --delete",
-    "delete:yes": "node bin/css-ghost.js ./test --delete --yes"
+    "delete:yes": "node bin/css-ghost.js ./test --delete --yes",
+    "setup": "node bin/css-ghost.js --setup"
   },
   "files": [
     "bin",

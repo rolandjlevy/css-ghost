@@ -39,41 +39,71 @@ export function scan(dirs) {
 
   const styleFiles = [...allStyleFiles, ...jsStyleFiles];
 
-  // Build global usage map from all component files
+  // ── PASS 1: Parse all style files once and cache results ─────────────────
+  // This avoids double-reading and gives us cssVars / varUsages in one shot.
+  const parsedStyleFiles = new Map(); // filePath → parseStyleFile result
+
+  const globalUsedVars = new Set(); // CSS var usages collected from ALL files
+
+  for (const styleFile of styleFiles) {
+    try {
+      const parsed = parseStyleFile(styleFile);
+      parsedStyleFiles.set(styleFile, parsed);
+      // Count var usages defined within style files themselves
+      // (e.g. one CSS file using a var defined in another)
+      if (parsed.varUsages) {
+        for (const v of parsed.varUsages) globalUsedVars.add(v);
+      }
+    } catch (e) {
+      console.warn(`⚠️  Could not parse ${styleFile}: ${e.message}`);
+    }
+  }
+
+  // ── PASS 2: Parse component files — collect class usages + var usages ─────
   const globalUsed = new Set();
   const dynamicComponentFiles = [];
 
   for (const file of componentFiles) {
     try {
-      const { used, hasDynamic } = parseComponentFile(file);
+      const { used, usedVars, hasDynamic } = parseComponentFile(file);
       for (const cls of used) globalUsed.add(cls);
+      if (usedVars) for (const v of usedVars) globalUsedVars.add(v);
       if (hasDynamic) dynamicComponentFiles.push(file);
     } catch {
       // skip unreadable files
     }
   }
 
-  // Analyse each style file
+  // ── PASS 3: Cross-reference and build results ─────────────────────────────
   const results = [];
 
   for (const styleFile of styleFiles) {
-    try {
-      const { selectors, hasDynamic } = parseStyleFile(styleFile);
-      // selectors is now a Map: name → { line, rule }
-      const orphaned = [...selectors.entries()]
-        .filter(([name]) => !globalUsed.has(name))
-        .map(([name, meta]) => ({ name, ...meta }));
+    const parsed = parsedStyleFiles.get(styleFile);
+    if (!parsed) continue;
 
-      results.push({
-        filePath: styleFile,
-        total: selectors.size,
-        orphaned,
-        hasDynamic: hasDynamic || dynamicComponentFiles.length > 0,
-        dynamicFiles: dynamicComponentFiles,
-      });
-    } catch (e) {
-      console.warn(`⚠️  Could not parse ${styleFile}: ${e.message}`);
-    }
+    const { selectors, cssVars, hasDynamic } = parsed;
+
+    // Orphaned class selectors
+    const orphaned = [...selectors.entries()]
+      .filter(([name]) => !globalUsed.has(name))
+      .map(([name, meta]) => ({ name, ...meta }));
+
+    // Orphaned CSS custom properties
+    const orphanedVars = cssVars
+      ? [...cssVars.entries()]
+          .filter(([name]) => !globalUsedVars.has(name))
+          .map(([name, meta]) => ({ name, ...meta }))
+      : [];
+
+    results.push({
+      filePath: styleFile,
+      total: selectors.size,
+      orphaned,
+      orphanedVars,
+      totalVars: cssVars?.size ?? 0,
+      hasDynamic: hasDynamic || dynamicComponentFiles.length > 0,
+      dynamicFiles: dynamicComponentFiles,
+    });
   }
 
   return results;

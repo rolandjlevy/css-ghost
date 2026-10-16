@@ -1,6 +1,56 @@
 import { readFileSync } from 'fs';
 import { extname } from 'path';
 
+// ─── CSS custom property extraction ─────────────────────────────────────────
+
+/**
+ * Find every `--name: value;` declaration in a CSS/SCSS file.
+ * Returns a Map of '--name' → { line, rule }.
+ *
+ * Deliberately ignores `var(--name)` usages because those don't have `:` directly
+ * after the variable name — so the regex `--name\s*:` is safe.
+ */
+function extractCssVarDefinitions(content) {
+  const vars = new Map();
+  // Strip block comments preserving line numbers
+  const stripped = content.replace(/\/\*[\s\S]*?\*\//g, m => m.replace(/[^\n]/g, ' '));
+  const strippedLines = stripped.split('\n');
+  const rawLines = content.split('\n');
+
+  for (let i = 0; i < strippedLines.length; i++) {
+    const line = strippedLines[i];
+    const lineNum = i + 1;
+    const varDefRe = /(--[a-zA-Z][a-zA-Z0-9-]*)\s*:/g;
+    let m;
+    while ((m = varDefRe.exec(line)) !== null) {
+      const name = m[1];
+      if (!vars.has(name)) {
+        // Read value from the raw (non-stripped) line
+        const rawAfterColon = rawLines[i].slice(rawLines[i].indexOf(m[0]) + m[0].length).trim();
+        const value = rawAfterColon.replace(/;.*$/, '').replace(/\/\*.*\*\//g, '').trim();
+        vars.set(name, { line: lineNum, rule: `${name}: ${value};` });
+      }
+    }
+  }
+
+  return vars;
+}
+
+/**
+ * Find every `var(--name)` usage in any file content.
+ * Returns a Set of '--name' strings.
+ * Works across CSS, SCSS, JS, TS, JSX, TSX, HTML, Vue, Svelte, etc.
+ */
+export function extractVarUsages(content) {
+  const used = new Set();
+  const re = /var\s*\(\s*(--[a-zA-Z][a-zA-Z0-9-]*)/g;
+  let m;
+  while ((m = re.exec(content)) !== null) {
+    used.add(m[1]);
+  }
+  return used;
+}
+
 // ─── CSS / SCSS selector extraction ────────────────────────────────────────
 
 function extractCssSelectors(content) {
@@ -275,15 +325,22 @@ export function parseStyleFile(filePath) {
   const ext = extname(filePath);
 
   if (['.css', '.scss', '.sass', '.less'].includes(ext)) {
-    return { selectors: extractCssSelectors(content), hasDynamic: false };
+    return {
+      selectors: extractCssSelectors(content),
+      cssVars:   extractCssVarDefinitions(content),
+      varUsages: extractVarUsages(content), // vars used within this style file itself
+      hasDynamic: false,
+    };
   }
 
-  // JS/TS style file
+  // JS/TS style file — CSS custom properties are not typically defined here
   const selectors = extractJsStyleKeys(content);
-  return { selectors, hasDynamic: false };
+  return { selectors, cssVars: new Map(), varUsages: new Set(), hasDynamic: false };
 }
 
 export function parseComponentFile(filePath) {
   const content = readFileSync(filePath, 'utf-8');
-  return extractUsages(content);
+  const { used, hasDynamic } = extractUsages(content);
+  const usedVars = extractVarUsages(content);
+  return { used, usedVars, hasDynamic };
 }

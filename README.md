@@ -63,14 +63,99 @@ css-ghost [directory] [directory2] ... [options]
 
 **Options:**
 
-| Flag              | Description                                     | Default            |
-| ----------------- | ----------------------------------------------- | ------------------ |
-| `--output <file>` | Output report file path                         | `orphan-report.md` |
-| `--delete`        | Delete all orphaned selectors from source files | off                |
-| `--yes`           | Skip the deletion confirmation prompt           | off                |
-| `--ai`            | Append an AI-generated summary (requires setup) | off                |
-| `--setup`         | Save your OpenRouter API key for `--ai`         | —                  |
-| `-h, --help`      | Show help                                       | —                  |
+| Flag                  | Description                                          | Default            |
+| --------------------- | ---------------------------------------------------- | ------------------ |
+| `--output <file>`     | Output report file path                              | `orphan-report.md` |
+| `--delete`            | Delete all orphaned selectors from source files      | off                |
+| `--yes`               | Skip the deletion confirmation prompt                | off                |
+| `--strict`            | Exit with code 1 when any orphans are found (CI use) | off               |
+| `--ghost-trail`       | Show the last git commit that touched each orphan    | off                |
+| `--install-hook`      | Write a pre-commit hook to `.git/hooks/pre-commit`   | —                  |
+| `--ai`                | Append an AI-generated summary (requires setup)      | off                |
+| `--setup`             | Save your OpenRouter API key for `--ai`              | —                  |
+| `-h, --help`          | Show help                                            | —                  |
+
+## CSS variable orphan detection
+
+css-ghost also catches **orphaned CSS custom properties** — variables defined with `--my-token: value` but never consumed anywhere via `var(--my-token)`.
+
+Usages are detected across all file types: CSS, SCSS, JS, TS, JSX, TSX, Vue, Svelte, HTML. A variable defined in `variables.css` and used in a React component is correctly seen as _used_.
+
+```
+   🔮 --colour-danger-hover (line 8)
+      --colour-danger-hover: #dc2626;
+
+   🔮 --spacing-xl (line 26)
+      --spacing-xl: 64px;
+```
+
+Orphaned variables appear under a separate **🔮 Orphaned CSS variables** section in both the terminal output and the markdown report.
+
+---
+
+## Ghost trail — git history for orphans
+
+Pass `--ghost-trail` to fetch the last git commit that changed each orphan's occurrence count in the codebase. For class-name orphans the search is limited to component file types (`.tsx`, `.jsx`, `.ts`, `.js`, etc.) so the result reflects _usage_ history rather than the style-file definition.
+
+```bash
+css-ghost ./src --ghost-trail
+```
+
+```
+   👻 .iconRight (line 28)
+      🕵️  b5c6efb · Roland Levy · 3 weeks ago — "Refactor Button component"
+      .iconRight {
+        margin-left: 6px;
+      }
+```
+
+For CSS variables the search looks for `var(--name` across all file types.
+
+> **Note:** ghost trail runs one `git log -S` per orphan in parallel. On large histories with many orphans it may take a few seconds.
+
+---
+
+## Pre-commit hook
+
+Install a hook that blocks commits when orphaned selectors are present:
+
+```bash
+css-ghost --install-hook ./src
+```
+
+This writes `.git/hooks/pre-commit` (executable, `chmod 755`) containing:
+
+```sh
+#!/bin/sh
+echo "👻  css-ghost — checking for orphaned CSS selectors..."
+npx --yes @rolandjlevy/css-ghost ./src --strict --output /tmp/css-ghost-hook-report.md
+
+if [ $? -ne 0 ]; then
+  echo "❌  Commit blocked: orphaned CSS selectors found"
+  echo "    Run 'css-ghost ./src --delete' to remove them"
+  echo "    Or skip: git commit --no-verify"
+  exit 1
+fi
+```
+
+Pass multiple directories to the hook installer the same way you would to a normal scan:
+
+```bash
+css-ghost --install-hook ./src ./components ./pages
+```
+
+To uninstall: `rm .git/hooks/pre-commit`
+
+### `--strict` flag
+
+`--strict` makes css-ghost exit with code 1 when any orphans are found — the mechanism the hook depends on, but also useful in CI workflows independently:
+
+```bash
+# In CI: fail the build if orphans exist
+css-ghost ./src --strict
+```
+
+---
 
 ## Interactive folder picker
 
@@ -128,6 +213,15 @@ css-ghost
 
 # Scan your src folder
 css-ghost ./src
+
+# Show git history for each orphan
+css-ghost ./src --ghost-trail
+
+# Fail with exit code 1 when orphans exist (CI)
+css-ghost ./src --strict
+
+# Install a pre-commit hook that scans ./src
+css-ghost --install-hook ./src
 
 # Scan and delete all orphans (with confirmation prompt)
 css-ghost ./src --delete
