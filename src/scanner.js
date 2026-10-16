@@ -13,7 +13,9 @@ export function scan(dirs) {
     allJsCandidates.push(...componentFiles);
   }
 
-  // Split JS/TS files into style files vs component files
+  // Split JS/TS files into style files vs component files.
+  // makeStyles files are dual-role: they define style keys AND may reference
+  // those classes in the same file, so they go into both lists.
   const jsStyleFiles = [];
   const componentFiles = [];
 
@@ -24,6 +26,8 @@ export function scan(dirs) {
         const content = readFileSync(file, 'utf-8');
         if (isJsStyleFile(content, file)) {
           jsStyleFiles.push(file);
+          // makeStyles files may also consume their own classes in the same file
+          if (/makeStyles\s*\(/.test(content)) componentFiles.push(file);
           continue;
         }
       } catch {

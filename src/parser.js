@@ -76,34 +76,90 @@ function extractCssSelectors(content) {
 export function isJsStyleFile(content, filePath) {
   return (
     /StyleSheet\.create\s*\(\s*\{/.test(content) ||
+    /makeStyles\s*\(/.test(content) ||
     (/styles?\.(js|ts)$/.test(filePath) && /(const|let|var)\s+styles?\s*=\s*\{/.test(content))
   );
 }
 
-function extractJsStyleKeys(content) {
-  const keys = new Map(); // name → { line, rule }
-  const lines = content.split('\n');
+// Extract top-level keys from a JS style object, depth-aware so CSS property
+// keys nested inside each class's value object are not returned.
+function extractTopLevelKeys(objectContent, startLine) {
+  const keys = new Map();
+  const objLines = objectContent.split('\n');
+  let depth = 0;
 
-  const ssMatch = content.match(/StyleSheet\.create\s*\(\s*\{([\s\S]*?)\}\s*\)/);
-  const plainMatch = content.match(/(?:const|let|var)\s+styles?\s*=\s*\{([\s\S]*)\}/);
-  const objectContent = ssMatch?.[1] ?? plainMatch?.[1];
+  for (let i = 0; i < objLines.length; i++) {
+    const line = objLines[i];
+    const lineNum = startLine + i;
 
-  if (objectContent) {
-    // Find start offset in original content
-    const startOffset = content.indexOf(objectContent);
-    const preContent = content.slice(0, startOffset);
-    const startLine = preContent.split('\n').length;
-
-    const keyRegex = /^\s*([a-zA-Z_$][a-zA-Z0-9_$]*)\s*:/gm;
-    let m;
-    while ((m = keyRegex.exec(objectContent)) !== null) {
-      const keyLine = startLine + objectContent.slice(0, m.index).split('\n').length - 1;
-      const name = m[1];
-      if (!keys.has(name)) {
-        // Grab the value snippet for context
-        const lineText = lines[keyLine - 1]?.trim() ?? '';
-        keys.set(name, { line: keyLine, rule: lineText });
+    if (depth === 0) {
+      const keyMatch = line.match(/^\s*([a-zA-Z_$][a-zA-Z0-9_$]*)\s*:/);
+      if (keyMatch) {
+        const name = keyMatch[1];
+        if (!keys.has(name)) {
+          keys.set(name, { line: lineNum, rule: line.trim() });
+        }
       }
+    }
+
+    for (const char of line) {
+      if (char === '{') depth++;
+      else if (char === '}') depth--;
+    }
+  }
+
+  return keys;
+}
+
+// Find the content between the first matching { } pair after `startIdx`.
+function extractBraceContent(content, startIdx) {
+  let braceStart = -1;
+  for (let i = startIdx; i < content.length; i++) {
+    if (content[i] === '{') { braceStart = i; break; }
+  }
+  if (braceStart === -1) return null;
+
+  let depth = 0;
+  let end = braceStart;
+  for (let i = braceStart; i < content.length; i++) {
+    if (content[i] === '{') depth++;
+    else if (content[i] === '}') {
+      depth--;
+      if (depth === 0) { end = i; break; }
+    }
+  }
+
+  const inner = content.slice(braceStart + 1, end);
+  const startLine = content.slice(0, braceStart + 1).split('\n').length;
+  return { inner, startLine };
+}
+
+function extractJsStyleKeys(content) {
+  const keys = new Map();
+
+  // StyleSheet.create({ ... }) — React Native
+  const ssMatch = content.match(/StyleSheet\.create\s*\(\s*\{([\s\S]*?)\}\s*\)/);
+  // const styles = { ... } — plain named object
+  const plainMatch = content.match(/(?:const|let|var)\s+styles?\s*=\s*\{([\s\S]*)\}/);
+  const flatContent = ssMatch?.[1] ?? plainMatch?.[1];
+
+  if (flatContent) {
+    const startOffset = content.indexOf(flatContent);
+    const startLine = content.slice(0, startOffset).split('\n').length;
+    for (const [k, v] of extractTopLevelKeys(flatContent, startLine)) {
+      if (!keys.has(k)) keys.set(k, v);
+    }
+  }
+
+  // makeStyles({ ... }) or makeStyles(theme => ({ ... })) — MUI
+  // Handles plain object, arrow returning object, and createStyles wrapper.
+  const msRegex = /makeStyles\s*\(/g;
+  let msMatch;
+  while ((msMatch = msRegex.exec(content)) !== null) {
+    const result = extractBraceContent(content, msMatch.index);
+    if (!result) continue;
+    for (const [k, v] of extractTopLevelKeys(result.inner, result.startLine)) {
+      if (!keys.has(k)) keys.set(k, v);
     }
   }
 
@@ -123,8 +179,8 @@ export function extractUsages(content) {
     m[1].trim().split(/\s+/).forEach(c => c && used.add(c));
   }
 
-  // styles.foo
-  const dotRegex = /styles?\.([a-zA-Z_$][a-zA-Z0-9_$]*)/g;
+  // styles.foo or classes.foo (MUI makeStyles convention)
+  const dotRegex = /(?:styles?|classes)\.([a-zA-Z_$][a-zA-Z0-9_$]*)/g;
   while ((m = dotRegex.exec(content)) !== null) {
     used.add(m[1]);
   }
