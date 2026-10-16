@@ -1,7 +1,7 @@
 {
   "name": "@rolandjlevy/css-ghost",
   "version": "1.1.0",
-  "description": "Find orphaned CSS class selectors in your codebase",
+  "description": "Find and remove unused CSS selectors and orphaned CSS custom properties — a CLI linter and auditor for React, Vue, Svelte, SCSS, and CSS Modules",
   "type": "module",
   "bin": {
     "css-ghost": "bin/css-ghost.js"
@@ -22,15 +22,21 @@
   ],
   "keywords": [
     "css",
-    "orphan",
     "unused",
+    "orphan",
     "selectors",
+    "dead-code",
+    "cleanup",
     "cli",
     "linter",
+    "audit",
+    "tree-shaking",
+    "custom-properties",
     "react",
+    "vue",
+    "svelte",
     "scss",
-    "stylesheet",
-    "audit"
+    "css-modules"
   ],
   "author": "Roland Levy",
   "license": "MIT",
