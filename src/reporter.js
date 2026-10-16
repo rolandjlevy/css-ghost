@@ -1,10 +1,32 @@
 import { writeFileSync } from 'fs';
 import { relative } from 'path';
 
+function minifyCss(css) {
+  return css
+    .replace(/\/\*[\s\S]*?\*\//g, '')   // strip comments
+    .replace(/\s+/g, ' ')               // collapse whitespace
+    .replace(/\s*([{}:;,])\s*/g, '$1') // remove spaces around punctuation
+    .trim();
+}
+
+function calcSavings(rules) {
+  const raw = rules.reduce((n, r) => n + Buffer.byteLength(r || '', 'utf-8'), 0);
+  const min = rules.reduce((n, r) => n + Buffer.byteLength(minifyCss(r || ''), 'utf-8'), 0);
+  return { raw, min };
+}
+
+function formatBytes(n) {
+  if (n === 0) return '0 B';
+  if (n < 1024) return `${n} B`;
+  return `${(n / 1024).toFixed(1)} kB`;
+}
+
 export function generateReport(results, outputPath = 'orphan-report.md', aiSummary = null) {
   let totalDefined = 0;
   let totalOrphaned = 0;
   let filesWithOrphans = 0;
+  let totalRaw = 0;
+  let totalMin = 0;
 
   const sections = [];
 
@@ -22,12 +44,22 @@ export function generateReport(results, outputPath = 'orphan-report.md', aiSumma
     const relPath = relative(process.cwd(), filePath);
     const pct = total > 0 ? Math.round((orphaned.length / total) * 100) : 0;
 
+    const savings = hasOrphans
+      ? calcSavings(orphaned.map(o => o.rule).filter(Boolean))
+      : { raw: 0, min: 0 };
+    totalRaw += savings.raw;
+    totalMin += savings.min;
+
+    const savingsStr = hasOrphans
+      ? `${formatBytes(savings.raw)} raw · ${formatBytes(savings.min)} minified`
+      : '—';
+
     const lines = [
       `## \`${relPath}\``,
       '',
-      `| Defined | Orphaned | Unused % |`,
-      `| --- | --- | --- |`,
-      `| ${total} | ${orphaned.length} | ${pct}% |`,
+      `| Defined | Orphaned | Unused % | Potential savings |`,
+      `| --- | --- | --- | --- |`,
+      `| ${total} | ${orphaned.length} | ${pct}% | ${savingsStr} |`,
       '',
     ];
 
@@ -80,6 +112,7 @@ export function generateReport(results, outputPath = 'orphan-report.md', aiSumma
     `| Total orphaned selectors | ${totalOrphaned} |`,
     `| Files with orphans | ${filesWithOrphans} |`,
     `| Overall unused rate | ${unusedPct}% |`,
+    `| Potential savings | ${formatBytes(totalRaw)} raw · ${formatBytes(totalMin)} minified |`,
     '',
     '---',
     '',
@@ -103,7 +136,9 @@ export function generateReport(results, outputPath = 'orphan-report.md', aiSumma
   for (const result of results) {
     if (result.orphaned.length === 0) continue;
     const relPath = relative(process.cwd(), result.filePath);
-    console.log(`✅ ${relPath}\n`);
+    const s = calcSavings(result.orphaned.map(o => o.rule).filter(Boolean));
+    const savingsSuffix = s.raw > 0 ? ` — saves ~${formatBytes(s.raw)} (${formatBytes(s.min)} minified)` : '';
+    console.log(`✅ ${relPath}${savingsSuffix}\n`);
     result.orphaned.forEach(({ name, line, rule }) => {
       console.log(`   👻 .${name} (line ${line})`);
       if (rule) {
