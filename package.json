@@ -36,7 +36,8 @@
     "vue",
     "svelte",
     "scss",
-    "css-modules"
+    "css-modules",
+    "purgecss"
   ],
   "author": "Roland Levy",
   "license": "MIT",
