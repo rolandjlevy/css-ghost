@@ -7,11 +7,13 @@ Find orphaned CSS class selectors in your codebase — defined in style files bu
 Scans one or more directories for style files, extracts every class selector defined, then cross-references them against usages in your component files. Anything defined but never used is reported as an orphan — with its line number and the actual CSS printed inline.
 
 **Supported style files:**
+
 - `.css`, `.module.css`, `.scss`, `.sass`, `.less`
 - `.js` / `.ts` files using `StyleSheet.create({})`, `makeStyles({})` (MUI), or named style objects
 - `.css.ts` / `.css.js` files using `style()` or `styleVariants()` (vanilla-extract)
 
 **Detected usage patterns:**
+
 - `className="foo"`
 - `className={styles.foo}`
 - `styles['foo']`
@@ -61,14 +63,14 @@ css-ghost [directory] [directory2] ... [options]
 
 **Options:**
 
-| Flag | Description | Default |
-| --- | --- | --- |
-| `--output <file>` | Output report file path | `orphan-report.md` |
-| `--delete` | Delete all orphaned selectors from source files | off |
-| `--yes` | Skip the deletion confirmation prompt | off |
-| `--ai` | Append an AI-generated summary (requires setup) | off |
-| `--setup` | Save your OpenRouter API key for `--ai` | — |
-| `-h, --help` | Show help | — |
+| Flag              | Description                                     | Default            |
+| ----------------- | ----------------------------------------------- | ------------------ |
+| `--output <file>` | Output report file path                         | `orphan-report.md` |
+| `--delete`        | Delete all orphaned selectors from source files | off                |
+| `--yes`           | Skip the deletion confirmation prompt           | off                |
+| `--ai`            | Append an AI-generated summary (requires setup) | off                |
+| `--setup`         | Save your OpenRouter API key for `--ai`         | —                  |
+| `-h, --help`      | Show help                                       | —                  |
 
 ## Interactive folder picker
 
@@ -89,14 +91,14 @@ Run `css-ghost` with no arguments and an arrow-key picker opens in your terminal
 [↑↓/jk] navigate  [↵/→] enter  [←] parent  [a] add current dir  [d] done  [^C] quit
 ```
 
-| Key | Action |
-| --- | --- |
-| `↑` / `↓` or `k` / `j` | Move up and down the folder list |
-| `↵` or `→` | Enter the highlighted folder |
-| `←` or Backspace | Go up to the parent folder |
-| `a` | Add the current folder to the scan list |
-| `d` | Done — start the scan |
-| `Ctrl+C` | Quit without scanning |
+| Key                    | Action                                  |
+| ---------------------- | --------------------------------------- |
+| `↑` / `↓` or `k` / `j` | Move up and down the folder list        |
+| `↵` or `→`             | Enter the highlighted folder            |
+| `←` or Backspace       | Go up to the parent folder              |
+| `a`                    | Add the current folder to the scan list |
+| `d`                    | Done — start the scan                   |
+| `Ctrl+C`               | Quit without scanning                   |
 
 You can add **multiple folders** before pressing `d` — just navigate to each one and press `a`. If you press `d` without adding anything, the folder you're currently browsing is used.
 
@@ -117,6 +119,12 @@ css-ghost ./src --delete --yes
 Works across all supported file types — `.css`, `.scss`, `.less`, MUI `makeStyles`, and vanilla-extract exports.
 
 > **Tip:** commit or stash your work before running `--delete`. There is no undo.
+> | Flag | Description | Default |
+> | ----------------- | ----------------------------------------------- | ------------------ |
+> | `--output <file>` | Output report file path | `orphan-report.md` |
+> | `--ai` | Append an AI-generated summary (requires setup) | off |
+> | `--setup` | Save your OpenRouter API key for `--ai` | — |
+> | `-h, --help` | Show help | — |
 
 ## Examples
 
@@ -173,6 +181,7 @@ Running `css-ghost ./src` prints a live summary to your terminal:
 ```
 
 Each orphan shows:
+
 - the selector name and the **exact line number** where it's defined
 - the **full CSS rule** so you can see what it does before deciding to delete it
 
@@ -277,3 +286,10 @@ Then `source ~/.zshrc`. Use `claude-free` or `claude-r1` in place of `claude` to
 ## License
 
 MIT
+
+```
+  .-.
+ (o o)
+ | O |
+ '~~~'
+```

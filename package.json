@@ -7,11 +7,10 @@
     "css-ghost": "bin/css-ghost.js"
   },
   "scripts": {
+    "setup": "node bin/css-ghost.js --setup",
     "start": "node bin/css-ghost.js",
-    "scan": "node bin/css-ghost.js ./test",
     "delete": "node bin/css-ghost.js ./test --delete",
-    "delete:yes": "node bin/css-ghost.js ./test --delete --yes",
-    "setup": "node bin/css-ghost.js --setup"
+    "delete:yes": "node bin/css-ghost.js ./test --delete --yes"
   },
   "files": [
     "bin",
