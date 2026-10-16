@@ -160,6 +160,26 @@ npm run scan
 npm run scan -- --output ./reports/audit.md
 ```
 
+## Troubleshooting
+
+### `css-ghost: command not found` after global install
+
+Your npm global bin directory may not be on your PATH. Run:
+
+```bash
+npm bin -g
+```
+
+Then add that path to your shell config (`~/.zshrc`, `~/.bashrc`, etc.):
+
+```bash
+export PATH="$(npm bin -g):$PATH"
+```
+
+Reload with `source ~/.zshrc`. This is a one-time fix — it won't be needed again after that.
+
+> This is common when Node was installed via the official installer rather than nvm or Homebrew.
+
 ## No dependencies
 
 Built with Node.js built-ins only (`fs`, `path`). No npm packages required.
@@ -168,30 +188,29 @@ Built with Node.js built-ins only (`fs`, `path`). No npm packages required.
 
 This tool was created as a test project to explore [using OpenRouter's free model tier with Claude Code](https://www.mindstudio.ai/blog/open-router-free-models-claude-code-cost-reduction) as a way to cut AI development costs.
 
-Claude Code normally calls Anthropic's API directly. By overriding two environment variables you can route it through OpenRouter's free tier instead — meaning you can run agentic coding sessions at no cost using models like Llama 3.3 70B or Deepseek R1.
+Claude Code normally calls Anthropic's API directly. By overriding two environment variables you can route it through OpenRouter's free tier instead — meaning you can run agentic coding sessions at no cost.
 
-### Setup
-
-Get a free API key at [openrouter.ai/keys](https://openrouter.ai/keys), then add these aliases to your `~/.zshrc`:
+If you've already run `css-ghost --setup`, you have an OpenRouter key. You can also export it as an environment variable — css-ghost picks it up automatically, so you don't even need `--setup`:
 
 ```bash
-# Store your key once
 export OPENROUTER_API_KEY="sk-or-v1-YOUR_KEY"
+```
 
-# Llama 3.3 70B — fast, capable, free
+And you can reuse the same key with Claude Code by adding these aliases to your `~/.zshrc`:
+
+```bash
 alias claude-free='ANTHROPIC_BASE_URL="https://openrouter.ai/api/v1" \
   ANTHROPIC_API_KEY="$OPENROUTER_API_KEY" \
-  claude --model "meta-llama/llama-3.3-70b-instruct:free"'
+  claude --model "nvidia/nemotron-3.5-lightning:free"'
 
-# Deepseek R1 — strongest free option for reasoning and debugging
 alias claude-r1='ANTHROPIC_BASE_URL="https://openrouter.ai/api/v1" \
   ANTHROPIC_API_KEY="$OPENROUTER_API_KEY" \
-  claude --model "deepseek/deepseek-r1:free"'
+  claude --model "qwen/qwen3.8-27b:free"'
 ```
 
 Then `source ~/.zshrc`. Use `claude-free` or `claude-r1` in place of `claude` to start a free session.
 
-> **Note:** Free tier models handle Claude Code's tool call format well in practice, but run a quick agentic task first to confirm file read/edit/bash loops work end to end in your environment before committing to it for serious work.
+> **Note:** Free model availability changes frequently. Browse current options at [openrouter.ai/models](https://openrouter.ai/models?q=free) — filter by `:free`.
 
 ## License
 
