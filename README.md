@@ -9,6 +9,7 @@ Scans one or more directories for style files, extracts every class selector def
 **Supported style files:**
 - `.css`, `.module.css`, `.scss`, `.sass`, `.less`
 - `.js` / `.ts` files using `StyleSheet.create({})`, `makeStyles({})` (MUI), or named style objects
+- `.css.ts` / `.css.js` files using `style()` or `styleVariants()` (vanilla-extract)
 
 **Detected usage patterns:**
 - `className="foo"`
@@ -19,6 +20,7 @@ Scans one or more directories for style files, extracts every class selector def
 - `cx({ active: isOn, disabled: true })` — object keys extracted
 - `cx(['foo', condition && 'bar'])` — array string literals extracted
 - `classes.foo` — MUI `makeStyles` / `useStyles` convention
+- `import { foo } from './styles.css'` — vanilla-extract named imports
 
 **Dynamic class detection:**
 Patterns where the class name is truly unknowable at parse time — `styles[variable]` or template literals containing `${}` — are flagged with a ⚠️ warning. All statically resolvable patterns (string literals, ternaries, object keys) are analysed without warnings.

@@ -77,6 +77,7 @@ export function isJsStyleFile(content, filePath) {
   return (
     /StyleSheet\.create\s*\(\s*\{/.test(content) ||
     /makeStyles\s*\(/.test(content) ||
+    /\.css\.(ts|js)x?$/.test(filePath) ||                                           // vanilla-extract
     (/styles?\.(js|ts)$/.test(filePath) && /(const|let|var)\s+styles?\s*=\s*\{/.test(content))
   );
 }
@@ -163,6 +164,29 @@ function extractJsStyleKeys(content) {
     }
   }
 
+  // vanilla-extract: export const foo = style({...}) or style([...])
+  // The export name itself is the class — tracked as a selector.
+  const veStyleRegex = /export\s+const\s+([a-zA-Z_$][a-zA-Z0-9_$]*)\s*=\s*style\s*[([{]/g;
+  let veMatch;
+  while ((veMatch = veStyleRegex.exec(content)) !== null) {
+    const name = veMatch[1];
+    const lineNum = content.slice(0, veMatch.index).split('\n').length;
+    if (!keys.has(name)) {
+      keys.set(name, { line: lineNum, rule: `export const ${name} = style(...)` });
+    }
+  }
+
+  // vanilla-extract: export const variants = styleVariants({ small: {}, large: {} })
+  // The export name is tracked as a selector (usage: variants.small or variants[size]).
+  const veVariantsRegex = /export\s+const\s+([a-zA-Z_$][a-zA-Z0-9_$]*)\s*=\s*styleVariants\s*\(/g;
+  while ((veMatch = veVariantsRegex.exec(content)) !== null) {
+    const name = veMatch[1];
+    const lineNum = content.slice(0, veMatch.index).split('\n').length;
+    if (!keys.has(name)) {
+      keys.set(name, { line: lineNum, rule: `export const ${name} = styleVariants(...)` });
+    }
+  }
+
   return keys;
 }
 
@@ -223,6 +247,16 @@ export function extractUsages(content) {
     while ((sm = objKeyRegex.exec(inner)) !== null) {
       used.add(sm[1]);
     }
+  }
+
+  // vanilla-extract: import { foo, bar } from './something.css' (resolves to .css.ts)
+  // Named imports from any .css file are treated as used selectors.
+  // Handles aliases: `import { root as buttonRoot }` → tracks 'root' (the defined name).
+  const veImportRegex = /import\s*\{([^}]+)\}\s*from\s*['"][^'"]+\.css['"]/g;
+  while ((m = veImportRegex.exec(content)) !== null) {
+    m[1].split(',')
+      .map(n => n.trim().split(/\s+as\s+/)[0].trim())
+      .forEach(n => n && used.add(n));
   }
 
   // Template literal dynamic class names — flag only if truly dynamic (has ${})
