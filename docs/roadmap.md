@@ -134,8 +134,50 @@ Once the GIF is in the repo (e.g. `docs/demo.gif`):
 
 ## Other Planned Improvements
 
-- **`--watch` mode** — re-run the scan automatically when style or component files change
-- **Ignore patterns** — a `.cssghostignore` file (or `cssGhost.ignore` in `package.json`) to exclude specific selectors or files
-- **JSON output** — `--format json` for piping results into other tools or CI pipelines
-- **GitHub Actions example** — a sample workflow that runs `css-ghost` on PRs and comments with the orphan count
-- **Monorepo support** — smarter cross-package usage detection when a style file in one package is consumed in another
+### Developer experience
+
+- **`--watch` mode** — re-run the scan automatically when style or component files change; debounced so rapid saves don't hammer the scanner
+- **Ignore patterns** — a `.cssghostignore` file (or a `cssGhost.ignore` key in `package.json`) to exclude specific selectors, files, or glob patterns from the report
+- **JSON output** — `--format json` dumps the full results object to stdout for piping into other tools, CI pipelines, or a custom dashboard
+- **Interactive TUI delete** — instead of deleting everything at once, arrow-key through the orphan list and cherry-pick which ones to remove before confirming
+- **Config file** — a `.cssghostrc` (JSON or YAML) or `cssGhost` key in `package.json` that persists flags like `--output`, `--strict`, and ignore patterns so you don't have to repeat them every run
+- **Baseline snapshots** — `css-ghost --save-baseline` stores the current orphan list; subsequent runs with `--diff` report only orphans that are _new_ since the baseline, making it practical on codebases that already have technical debt
+
+---
+
+### Detection coverage
+
+- **Unused `@keyframes`** — animation blocks defined with `@keyframes name {}` but never referenced in an `animation` or `animation-name` property anywhere in the codebase; arguably the most invisible dead code in large stylesheets
+- **Duplicate class definitions** — flag the same selector defined in more than one file so you can decide which one to keep (common after component migrations)
+- **Unused CSS custom properties in JS** — detect `--token` definitions inside `element.style.setProperty('--token', value)` calls that are never read back via `getPropertyValue` or `var()`
+- **Styled-components / Emotion / Stitches support** — parse tagged template literals (`` styled.div`...` ``) and `css` helper calls; extract class-equivalent names and check them against the component tree
+- **`@layer` dead-layer detection** — flag `@layer` declarations that are defined but never populated, or layers whose rules are entirely orphaned
+- **Unused media queries** — `@media` blocks that contain only orphaned selectors (so the whole block can be removed)
+- **Deprecated naming patterns** — flag selectors matching configurable patterns like `is-old-*`, `legacy-*`, `deprecated-*`, or `TODO-*` regardless of usage
+
+---
+
+### CI / team tooling
+
+- **GitHub Actions example** — a sample workflow (`css-ghost.yml`) that runs on every PR, fails if orphan count _increases_, and posts a comment with the diff
+- **PR diff mode** — compare orphan counts between `HEAD` and the base branch (`--diff-branch main`) so the report shows "3 new orphans introduced, 1 removed" rather than total counts
+- **Orphan trend graph** — `--history` reads past `orphan-report.md` files from git and prints or charts the orphan count over time
+- **SARIF output** — `--format sarif` emits a Static Analysis Results Interchange Format file that GitHub Code Scanning and VS Code Problems panel can consume natively
+
+---
+
+### Monorepo & framework support
+
+- **Monorepo support** — cross-package usage detection: a style file in `packages/design-system` consumed by `packages/app` is correctly seen as used; powered by reading `package.json` workspace entries
+- **Next.js App Router awareness** — distinguish between `page.module.css`, `layout.module.css`, and `global.css`; understand that global selectors are used by the runtime, not by import statements
+- **Tailwind coexistence mode** — when Tailwind is detected, skip utility classes from `@apply` that would otherwise look like orphans, and only report on the hand-written non-utility selectors
+- **CSS Modules `composes:` graph** — follow `composes: foo from './other.module.css'` chains so composed selectors are not incorrectly flagged as orphaned in the source file
+
+---
+
+### Reporting & integrations
+
+- **HTML report** — `--format html` generates a self-contained interactive page with collapsible file sections, a search box, and one-click copy of the selector name
+- **Slack / webhook notify** — `--notify <webhook-url>` posts a summary to a Slack channel (or any webhook) after each scan; useful in scheduled CI jobs
+- **Editor links in terminal** — orphan lines printed to the terminal are clickable `vscode://` (or `cursor://`) links that open the exact file and line; no more manual navigation
+- **`--annotate` mode** — writes `/* css-ghost: orphan */` comments directly above each orphaned rule in the source file as a gentle in-file reminder without deleting anything
