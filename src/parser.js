@@ -259,14 +259,14 @@ export function extractUsages(content) {
     used.add(m[1]);
   }
 
-  // styles['foo'] or styles["foo"]
-  const bracketStringRegex = /styles?\[['"]([a-zA-Z_$][a-zA-Z0-9_$]*)['"]]/g;
+  // styles['foo'] or styles["foo"] — includes hyphenated names (e.g. styles['btn-primary'])
+  const bracketStringRegex = /styles?\[['"]([a-zA-Z_$][a-zA-Z0-9_$-]*)['"]]/g;
   while ((m = bracketStringRegex.exec(content)) !== null) {
     used.add(m[1]);
   }
 
   // styles[condition ? 'foo' : 'bar'] — ternary with string literals: extract both branches
-  const ternaryBracketRegex = /styles?\[\s*[^?]+\?\s*['"]([a-zA-Z_$][a-zA-Z0-9_$]*)["']\s*:\s*['"]([a-zA-Z_$][a-zA-Z0-9_$]*)["']\s*\]/g;
+  const ternaryBracketRegex = /styles?\[\s*[^?]+\?\s*['"]([a-zA-Z_$][a-zA-Z0-9_$-]*)["']\s*:\s*['"]([a-zA-Z_$][a-zA-Z0-9_$-]*)["']\s*\]/g;
   while ((m = ternaryBracketRegex.exec(content)) !== null) {
     used.add(m[1]);
     used.add(m[2]);
