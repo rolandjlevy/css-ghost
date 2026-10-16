@@ -119,12 +119,6 @@ css-ghost ./src --delete --yes
 Works across all supported file types — `.css`, `.scss`, `.less`, MUI `makeStyles`, and vanilla-extract exports.
 
 > **Tip:** commit or stash your work before running `--delete`. There is no undo.
-> | Flag | Description | Default |
-> | ----------------- | ----------------------------------------------- | ------------------ |
-> | `--output <file>` | Output report file path | `orphan-report.md` |
-> | `--ai` | Append an AI-generated summary (requires setup) | off |
-> | `--setup` | Save your OpenRouter API key for `--ai` | — |
-> | `-h, --help` | Show help | — |
 
 ## Examples
 
