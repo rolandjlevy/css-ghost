@@ -1,6 +1,6 @@
 # 👻 css-ghost
 
-Find orphaned CSS class selectors in your codebase — defined in style files but never referenced in your components.
+Find and remove unused CSS selectors and orphaned CSS custom properties — selectors defined in your style files but never referenced in your components, across React, Vue, Svelte, SCSS, and CSS Modules
 
 ## What it does
 
