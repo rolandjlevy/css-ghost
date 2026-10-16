@@ -59,7 +59,18 @@ npx @rolandjlevy/css-ghost ./src
 css-ghost [directory] [directory2] ... [options]
 ```
 
-Running `css-ghost` with **no arguments** opens an interactive directory picker — navigate with arrow keys, press `a` to add the current folder, and `d` when done:
+**Options:**
+
+| Flag | Description | Default |
+| --- | --- | --- |
+| `--output <file>` | Output report file path | `orphan-report.md` |
+| `--ai` | Append an AI-generated summary (requires setup) | off |
+| `--setup` | Save your OpenRouter API key for `--ai` | — |
+| `-h, --help` | Show help | — |
+
+## Interactive folder picker
+
+Run `css-ghost` with no arguments and an arrow-key picker opens in your terminal:
 
 ```
 📂 Directory picker  — navigate into a folder, then press [a] to add it
@@ -76,14 +87,16 @@ Running `css-ghost` with **no arguments** opens an interactive directory picker 
 [↑↓/jk] navigate  [↵/→] enter  [←] parent  [a] add current dir  [d] done  [^C] quit
 ```
 
-**Options:**
+| Key | Action |
+| --- | --- |
+| `↑` / `↓` or `k` / `j` | Move up and down the folder list |
+| `↵` or `→` | Enter the highlighted folder |
+| `←` or Backspace | Go up to the parent folder |
+| `a` | Add the current folder to the scan list |
+| `d` | Done — start the scan |
+| `Ctrl+C` | Quit without scanning |
 
-| Flag | Description | Default |
-| --- | --- | --- |
-| `--output <file>` | Output report file path | `orphan-report.md` |
-| `--ai` | Append an AI-generated summary (requires setup) | off |
-| `--setup` | Save your OpenRouter API key for `--ai` | — |
-| `-h, --help` | Show help | — |
+You can add **multiple folders** before pressing `d` — just navigate to each one and press `a`. If you press `d` without adding anything, the folder you're currently browsing is used.
 
 ## Examples
 
