@@ -14,6 +14,8 @@ Scans one or more directories for style files, extracts every class selector def
 
 ## Example output
 
+![css-ghost demo](./docs/demo.gif)
+
 ```
 👻 css-ghost scanning 1 directory...
    📁 src/styles
