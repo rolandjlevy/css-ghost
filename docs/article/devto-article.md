@@ -3,7 +3,7 @@ title: "css-ghost: find and delete orphaned CSS selectors with zero config"
 published: false
 description: "A zero-config Node.js CLI that cross-references your style files against your components and flags every selector nobody is using — with line numbers, the actual CSS, and an optional auto-delete."
 tags: css, node, tooling, webdev
-cover_image:
+cover_image: https://raw.githubusercontent.com/rolandjlevy/css-ghost/main/docs/article/standalone-article-banner.png
 ---
 
 You've been there. You rename a component, move a file, or quietly migrate from one styling approach to another — and the old CSS stays behind. Nobody complains, the build doesn't break, and the dead selectors quietly accumulate.
