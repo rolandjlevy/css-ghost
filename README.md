@@ -8,9 +8,9 @@ Scans one or more directories for style files, extracts every class selector def
 
 **Supported style files:** `.css`, `.module.css`, `.scss`, `.sass`, `.less`, `.js`/`.ts` using `StyleSheet.create({})` / `makeStyles({})` (MUI), `.css.ts`/`.css.js` using `style()` or `styleVariants()` (vanilla-extract)
 
-**Detected usage patterns:** `className="foo"`, `className={styles.foo}`, `styles['foo']`, ternary patterns, `cx()` / `clsx()` / `classnames()` (strings, objects and arrays), `classes.foo` (MUI), vanilla-extract named imports
+**Detected usage patterns:** `className="foo"`, `className={styles.foo}`, `styles['foo']`, ternary patterns, `cx()` / `clsx()` / `classnames()` (strings, objects and arrays), `classes.foo` (MUI), vanilla-extract named imports, Vue `:class` bindings, Svelte `class:name` directives
 
-**Dynamic class detection:** Patterns where the class name can't be resolved statically — `styles[variable]` or template literals with `${}` — are flagged with a ⚠️ warning instead of being reported as orphans.
+**Dynamic class detection:** Patterns where the class name can't be resolved statically — `styles[variable]` or template literals with `${}` — are flagged with a ⚠️ warning per file in both the terminal output and the Markdown report.
 
 ## How is this different from PurgeCSS?
 
