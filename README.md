@@ -22,16 +22,16 @@ css-ghost is a **source code auditor** — it finds dead selectors in your actua
 npx @rolandjlevy/css-ghost ./src
 ```
 
-| | PurgeCSS | css-ghost |
-|---|---|---|
-| Works on source files | ❌ Build output only | ✅ |
-| Zero config, no build step | ❌ Requires webpack / PostCSS | ✅ |
-| CSS custom property orphans | ❌ | ✅ |
-| Git history per orphan | ❌ | ✅ |
-| Pre-commit hook | ❌ | ✅ |
-| Deletes dead code for you | ❌ | ✅ |
-| MUI / vanilla-extract aware | ❌ | ✅ |
-| Safe with dynamic classes | ❌ Silently removes them | ✅ Flags with ⚠️ |
+|                             | PurgeCSS                      | css-ghost        |
+| --------------------------- | ----------------------------- | ---------------- |
+| Works on source files       | ❌ Build output only          | ✅               |
+| Zero config, no build step  | ❌ Requires webpack / PostCSS | ✅               |
+| CSS custom property orphans | ❌                            | ✅               |
+| Git history per orphan      | ❌                            | ✅               |
+| Pre-commit hook             | ❌                            | ✅               |
+| Deletes dead code for you   | ❌                            | ✅               |
+| MUI / vanilla-extract aware | ❌                            | ✅               |
+| Safe with dynamic classes   | ❌ Silently removes them      | ✅ Flags with ⚠️ |
 
 The two tools are complementary: PurgeCSS for trimming framework output at build time; css-ghost for auditing your own hand-written CSS throughout development.
 
