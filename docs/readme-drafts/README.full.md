@@ -27,31 +27,6 @@ Scans one or more directories for style files, extracts every class selector def
 **Dynamic class detection:**
 Patterns where the class name is truly unknowable at parse time — `styles[variable]` or template literals containing `${}` — are flagged with a ⚠️ warning. All statically resolvable patterns (string literals, ternaries, object keys) are analysed without warnings.
 
-## How is this different from PurgeCSS?
-
-[PurgeCSS](https://www.npmjs.com/package/purgecss) is a **build-time bundler** — it hooks into webpack, PostCSS, or Gulp to strip unused CSS from your production output. It's designed for removing large framework utility classes (Bootstrap, Tailwind) that you never use.
-
-css-ghost is a **source code auditor** — it finds dead selectors in your actual codebase, with no build step and no config file required. Just point it at a folder:
-
-```bash
-npx @rolandjlevy/css-ghost ./src
-```
-
-| | PurgeCSS | css-ghost |
-|---|---|---|
-| Works on source files | ❌ Build output only | ✅ |
-| Zero config, no build step | ❌ Requires webpack / PostCSS | ✅ |
-| CSS custom property orphans | ❌ | ✅ |
-| Git history per orphan | ❌ | ✅ |
-| Pre-commit hook | ❌ | ✅ |
-| Deletes dead code for you | ❌ | ✅ |
-| MUI / vanilla-extract aware | ❌ | ✅ |
-| Safe with dynamic classes | ❌ Silently removes them | ✅ Flags with ⚠️ |
-
-The two tools are complementary: PurgeCSS for trimming framework output at build time; css-ghost for auditing your own hand-written CSS throughout development.
-
----
-
 ## To enable AI features
 
 css-ghost can generate a plain English summary of your orphaned selectors using a free [OpenRouter](https://openrouter.ai) API key. Run the setup wizard once:
@@ -291,7 +266,6 @@ Running `css-ghost ./src` prints a live summary to your terminal:
       }
 
 📁 1 style file scanned
-💾 Potential savings: 3 selectors removed
 ```
 
 Each orphan shows:
