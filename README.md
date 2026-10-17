@@ -12,6 +12,58 @@ Scans one or more directories for style files, extracts every class selector def
 
 **Dynamic class detection:** Patterns where the class name can't be resolved statically — `styles[variable]` or template literals with `${}` — are flagged with a ⚠️ warning per file in both the terminal output and the Markdown report.
 
+## Example output
+
+```
+👻 css-ghost scanning 1 directory...
+   📁 src/styles
+
+📊 3 orphaned selectors · 2 orphaned CSS variables in 1 file. See: orphan-report.md
+💾 Potential savings: 130 B minified
+
+✅ src/styles/layout.scss — saves ~160 B (130 B minified)
+
+   👻 .legacyNav (line 33)
+      .legacyNav {
+        display: flex;
+        background: #ccc;
+      }
+
+   👻 .deprecatedSidebar (line 38)
+      .deprecatedSidebar {
+        width: 240px;
+        position: fixed;
+      }
+
+   👻 .oldHero (line 43)
+      .oldHero {
+        height: 600px;
+        background: $danger;
+      }
+
+   🔮 Orphaned CSS variables:
+
+   🔮 --primary-color (line 50)
+      --primary-color: #4f46e5;
+
+   🔮 --unused-token (line 51)
+      --unused-token: #aabbcc;
+```
+
+When a component uses dynamic class access (`styles[variant]`), the file is flagged rather than reporting false positives:
+
+```
+✅ src/components/alert.module.css
+
+   ⚠️  Dynamic class references detected — results may be incomplete.
+   Dynamic references in: src/components/Alert.jsx
+
+   👻 .hidden (line 30)
+      .hidden { display: none; }
+```
+
+---
+
 ## How is this different from PurgeCSS?
 
 [PurgeCSS](https://www.npmjs.com/package/purgecss) is a **build-time bundler** — it hooks into webpack, PostCSS, or Gulp to strip unused CSS from your production output. It's designed for removing large framework utility classes (Bootstrap, Tailwind) that you never use.
