@@ -41,6 +41,18 @@ css-ghost ./src
 
 ---
 
+## Interactive folder picker
+
+Run `css-ghost` with no arguments and an interactive directory picker opens. Navigate with `↑↓` (or `j/k`), press `Enter` or `→` to go into a folder, `←` to go back up, `[a]` to add the current directory to the scan, then `[d]` when done:
+
+```bash
+css-ghost
+```
+
+Useful when you're not sure which subfolder to target, or want to scan multiple directories in one pass.
+
+---
+
 ## Dynamic class detection
 
 If a component accesses classes dynamically — `styles[variable]`, `styles[\`${variant}\`]` — css-ghost can't resolve the class name statically. Rather than silently skip those files or report false positives, it flags them with a ⚠️ warning per file:
