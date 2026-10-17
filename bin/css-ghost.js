@@ -8,12 +8,19 @@ import { deleteOrphans } from '../src/deleter.js';
 import { runSetup } from '../src/setup.js';
 import { getAiSummary } from '../src/ai.js';
 import { loadConfig, mergeConfig } from '../src/config.js';
+import { runInit } from '../src/init.js';
 
 const args = process.argv.slice(2);
 
 // --setup
 if (args.includes('--setup')) {
   await runSetup();
+  process.exit(0);
+}
+
+// --init — interactive wizard that creates css-ghost.config.js
+if (args.includes('--init')) {
+  await runInit();
   process.exit(0);
 }
 
@@ -57,6 +64,7 @@ Options:
   --install-hook     Write a pre-commit hook to .git/hooks/pre-commit
   --ai               Append an AI-generated summary to the report
   --setup            Save your OpenRouter API key for use with --ai
+  --init             Create or update css-ghost.config.js interactively
   -h, --help         Show this help message
 
   CLI flags always override config file values.

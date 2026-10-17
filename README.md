@@ -102,11 +102,22 @@ css-ghost [directory] [directory2] ... [options]
 | `--install-hook`  | Write a pre-commit hook to `.git/hooks/pre-commit`   | —                  |
 | `--ai`            | Append an AI-generated summary (requires setup)      | off                |
 | `--setup`         | Save your OpenRouter API key for `--ai`              | —                  |
+| `--init`          | Create or update `css-ghost.config.js` interactively | —                  |
 | `-h, --help`      | Show help                                            | —                  |
 
 ## Config file
 
-For team projects, create a `css-ghost.config.js` in your project root so you never have to pass flags on the command line:
+For team projects, create a `css-ghost.config.js` in your project root so you never have to pass flags on the command line.
+
+**Generate it with the wizard:**
+
+```bash
+css-ghost --init
+```
+
+The wizard asks which directories to scan, where to put the report, whether to enable strict mode, and so on — then writes `css-ghost.config.js` to the current directory. Run it again any time to update the config.
+
+**Or write it by hand:**
 
 ```js
 // css-ghost.config.js
@@ -218,6 +229,7 @@ css-ghost ./src --delete --yes         # remove without prompting
 css-ghost ./src ./components ./pages   # scan multiple directories
 css-ghost ./src --ai                   # with AI summary
 css-ghost ./src --output ./reports/audit.md
+css-ghost --init                       # create / update css-ghost.config.js
 ```
 
 ## Programmatic API

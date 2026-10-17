@@ -15,6 +15,7 @@ All notable changes to `css-ghost` are documented here.
 - **`strict`, `ghostTrail`, `ai`, `delete`, `yes`** — any flag can be set in the config; CLI presence still overrides.
 - Config file path is printed at the start of each run so it's clear which config was picked up.
 - Unknown config keys produce a warning rather than silently being ignored.
+- **`--init` wizard** — run `css-ghost --init` to generate `css-ghost.config.js` interactively (prompts for dirs, output path, ignore list, and feature flags). Re-runnable: prompts before overwriting an existing config.
 
 ---
 
