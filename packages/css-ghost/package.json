@@ -1,0 +1,62 @@
+{
+  "name": "css-ghost",
+  "version": "1.3.0",
+  "description": "Find and remove unused CSS selectors and orphaned CSS custom properties — CLI and programmatic API for React, Vue, Svelte, SCSS, and CSS Modules",
+  "type": "module",
+  "exports": {
+    ".": "./index.js"
+  },
+  "main": "./index.js",
+  "types": "./index.d.ts",
+  "bin": {
+    "css-ghost": "bin/run.js"
+  },
+  "files": [
+    "bin",
+    "index.js",
+    "index.d.ts",
+    "README.md"
+  ],
+  "keywords": [
+    "css",
+    "unused",
+    "orphan",
+    "orphaned-selectors",
+    "selectors",
+    "dead-code",
+    "cleanup",
+    "cli",
+    "linter",
+    "audit",
+    "tree-shaking",
+    "custom-properties",
+    "css-variables",
+    "react",
+    "vue",
+    "svelte",
+    "scss",
+    "css-modules",
+    "purgecss",
+    "vite",
+    "webpack",
+    "postcss",
+    "vanilla-extract",
+    "style-audit"
+  ],
+  "author": "Roland Levy",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rolandjlevy/css-ghost.git"
+  },
+  "homepage": "https://github.com/rolandjlevy/css-ghost#readme",
+  "bugs": {
+    "url": "https://github.com/rolandjlevy/css-ghost/issues"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "@rolandjlevy/css-ghost": "^1.2.0"
+  }
+}
