@@ -1,11 +1,11 @@
 /**
- * @rolandjlevy/css-ghost — Programmatic API
+ * css-ghost — Programmatic API
  *
  * Use this when integrating css-ghost into build tools, scripts, or plugins
  * rather than running it as a CLI.
  *
  * @example
- * import { scan, generateReport } from '@rolandjlevy/css-ghost';
+ * import { scan, generateReport } from 'css-ghost';
  *
  * const results = scan(['/absolute/path/to/src']);
  * const { totalAllOrphans } = generateReport(results, 'orphan-report.md');

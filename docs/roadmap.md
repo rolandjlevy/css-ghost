@@ -6,7 +6,7 @@ Areas of planned development and improvement.
 
 ## VS Code Extension
 
-Build a VS Code extension with the same name and branding as the `css-ghost` CLI (`@rolandjlevy/css-ghost` on npm), reusing the existing `parser.js` and `scanner.js` directly rather than reimplementing them.
+Build a VS Code extension with the same name and branding as the `css-ghost` CLI (`css-ghost` on npm), reusing the existing `parser.js` and `scanner.js` directly rather than reimplementing them.
 
 See [`docs/vscode-extension.md`](./vscode-extension.md) for the full plan.
 

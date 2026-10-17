@@ -92,13 +92,13 @@ The AI summary appears in both the terminal output and the markdown report. The 
 ## Install
 
 ```bash
-npm install -g @rolandjlevy/css-ghost
+npm install -g css-ghost
 ```
 
 Or run without installing:
 
 ```bash
-npx @rolandjlevy/css-ghost ./src
+npx css-ghost ./src
 ```
 
 ## Usage
@@ -174,7 +174,7 @@ This writes `.git/hooks/pre-commit` (executable, `chmod 755`) containing:
 ```sh
 #!/bin/sh
 echo "👻  css-ghost — checking for orphaned CSS selectors..."
-npx --yes @rolandjlevy/css-ghost ./src --strict --output /tmp/css-ghost-hook-report.md
+npx --yes css-ghost ./src --strict --output /tmp/css-ghost-hook-report.md
 
 if [ $? -ne 0 ]; then
   echo "❌  Commit blocked: orphaned CSS selectors found"

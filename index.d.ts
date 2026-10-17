@@ -1,5 +1,5 @@
 /**
- * TypeScript declarations for @rolandjlevy/css-ghost
+ * TypeScript declarations for css-ghost
  * Import from the package root to get `scan` and `generateReport`.
  */
 
@@ -76,7 +76,7 @@ export interface ReportTotals {
  * @returns An array of per-file results — one entry per style file found.
  *
  * @example
- * import { scan } from '@rolandjlevy/css-ghost';
+ * import { scan } from 'css-ghost';
  * import { resolve } from 'path';
  *
  * const results = scan([resolve(process.cwd(), 'src')]);
@@ -94,7 +94,7 @@ export function scan(dirs: string[]): ScanResult[];
  * @returns Totals you can use for CI gates or `--strict` mode.
  *
  * @example
- * import { scan, generateReport } from '@rolandjlevy/css-ghost';
+ * import { scan, generateReport } from 'css-ghost';
  * import { resolve } from 'path';
  *
  * const results = scan([resolve(process.cwd(), 'src')]);

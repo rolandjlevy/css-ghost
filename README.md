@@ -43,7 +43,7 @@ When a component uses dynamic class access (`styles[variant]`), the file is flag
 css-ghost is a **source code auditor** — it finds dead selectors in your actual codebase, with no build step and no config file required. Just point it at a folder:
 
 ```bash
-npx @rolandjlevy/css-ghost ./src
+npx css-ghost ./src
 ```
 
 |                             | PurgeCSS                      | css-ghost        |
@@ -75,13 +75,13 @@ The AI summary appears in both the terminal output and the markdown report. The 
 ## Install
 
 ```bash
-npm install -g @rolandjlevy/css-ghost
+npm install -g css-ghost
 ```
 
 Or run without installing:
 
 ```bash
-npx @rolandjlevy/css-ghost ./src
+npx css-ghost ./src
 ```
 
 ## Usage
@@ -169,11 +169,11 @@ css-ghost ./src --output ./reports/audit.md
 Use css-ghost as a library inside your own build tools, Vite plugins, or scripts:
 
 ```bash
-npm install @rolandjlevy/css-ghost
+npm install css-ghost
 ```
 
 ```js
-import { scan, generateReport } from '@rolandjlevy/css-ghost';
+import { scan, generateReport } from 'css-ghost';
 import { resolve } from 'path';
 
 // Scan one or more directories

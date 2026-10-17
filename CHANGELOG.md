@@ -1,6 +1,6 @@
 # Changelog
 
-All notable changes to `@rolandjlevy/css-ghost` are documented here.
+All notable changes to `css-ghost` are documented here.
 
 ---
 

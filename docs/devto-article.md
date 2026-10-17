@@ -8,7 +8,7 @@ cover_image:
 
 You've been there. You rename a component, move a file, or quietly migrate from one styling approach to another — and the old CSS stays behind. Nobody complains, the build doesn't break, and the dead selectors quietly accumulate.
 
-[css-ghost](https://www.npmjs.com/package/@rolandjlevy/css-ghost) is a small Node.js CLI I built to solve exactly that. Point it at a folder and it tells you every CSS class defined in your style files that isn't referenced anywhere in your components.
+[css-ghost](https://www.npmjs.com/package/css-ghost) is a small Node.js CLI I built to solve exactly that. Point it at a folder and it tells you every CSS class defined in your style files that isn't referenced anywhere in your components.
 
 ![css-ghost terminal demo](https://raw.githubusercontent.com/rolandjlevy/css-ghost/main/docs/demo.gif)
 
@@ -29,13 +29,13 @@ It also catches **orphaned CSS custom properties** (`--my-token: value` defined 
 No install required:
 
 ```bash
-npx @rolandjlevy/css-ghost ./src
+npx css-ghost ./src
 ```
 
 Or install globally for repeated use:
 
 ```bash
-npm install -g @rolandjlevy/css-ghost
+npm install -g css-ghost
 css-ghost ./src
 ```
 
@@ -139,4 +139,4 @@ The two tools are complementary — PurgeCSS for trimming framework output at bu
 
 ---
 
-The source is on [GitHub](https://github.com/rolandjlevy/css-ghost) and the package is on [npm](https://www.npmjs.com/package/@rolandjlevy/css-ghost). PRs and issues welcome.
+The source is on [GitHub](https://github.com/rolandjlevy/css-ghost) and the package is on [npm](https://www.npmjs.com/package/css-ghost). PRs and issues welcome.

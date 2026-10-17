@@ -36,7 +36,7 @@ export function installHook(dirs, cwd = process.cwd()) {
     '# Uninstall:     rm .git/hooks/pre-commit',
     '',
     `echo "👻  css-ghost — checking for orphaned CSS selectors..."`,
-    `npx --yes @rolandjlevy/css-ghost ${dirArgs} --strict --output /tmp/css-ghost-hook-report.md`,
+    `npx --yes css-ghost ${dirArgs} --strict --output /tmp/css-ghost-hook-report.md`,
     '',
     'if [ $? -ne 0 ]; then',
     '  echo ""',

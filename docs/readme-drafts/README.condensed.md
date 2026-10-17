@@ -19,7 +19,7 @@ Scans one or more directories for style files, extracts every class selector def
 css-ghost is a **source code auditor** — it finds dead selectors in your actual codebase, with no build step and no config file required. Just point it at a folder:
 
 ```bash
-npx @rolandjlevy/css-ghost ./src
+npx css-ghost ./src
 ```
 
 | | PurgeCSS | css-ghost |
@@ -51,13 +51,13 @@ The AI summary appears in both the terminal output and the markdown report. The 
 ## Install
 
 ```bash
-npm install -g @rolandjlevy/css-ghost
+npm install -g css-ghost
 ```
 
 Or run without installing:
 
 ```bash
-npx @rolandjlevy/css-ghost ./src
+npx css-ghost ./src
 ```
 
 ## Usage

@@ -30,7 +30,7 @@ This document is a self-contained handover. Every source file of the extension i
 
 ## 1. Goal and requirements
 
-Build a VS Code extension with the same name and branding as the `css-ghost` CLI (`@rolandjlevy/css-ghost` on npm), reusing the existing parser and scanner rather than reimplementing them.
+Build a VS Code extension with the same name and branding as the `css-ghost` CLI (`css-ghost` on npm), reusing the existing parser and scanner rather than reimplementing them.
 
 Requested features, and how each is delivered:
 
@@ -74,7 +74,7 @@ Behaviour worth knowing:
 - **Usage is global:** all used names from every component file go into one `Set`. A selector counts as used if any file anywhere uses that name.
 - **Selector extraction:** first occurrence of each class name per file wins (`if (!selectors.has(name))`).
 
-The extension calls `scan()` directly via the deep import `@rolandjlevy/css-ghost/src/scanner.js`. That works only because the core's `package.json` has **no `"exports"` field**. If an `"exports"` map is ever added to the CLI package, the deep import breaks, so either expose `./src/scanner.js` there or add a proper programmatic entry point (suggested in section 10).
+The extension calls `scan()` directly via the deep import `css-ghost/src/scanner.js`. That works only because the core's `package.json` has **no `"exports"` field**. If an `"exports"` map is ever added to the CLI package, the deep import breaks, so either expose `./src/scanner.js` there or add a proper programmatic entry point (suggested in section 10).
 
 The CLI's own fixtures (`test/components`, `test/styles`) were copied into `test/fixtures/` and drive the tests. Expected orphans there: `Button.module.css` has `disabled` and `iconRight`; `demo.module.css` has `ghost` and `phantom`.
 
@@ -95,7 +95,7 @@ The CLI's own fixtures (`test/components`, `test/styles`) were copied into `test
 └────────────────────────────────────┬──────────────────────────────────────┘
                                      │ worker.ts
                                      ▼
-              @rolandjlevy/css-ghost  scan(dirs)   (unchanged core)
+              css-ghost  scan(dirs)   (unchanged core)
                                      + locate.ts (adds column ranges)
 ```
 
@@ -160,7 +160,7 @@ cp -r /tmp/css-ghost-src/test/components /tmp/css-ghost-src/test/styles test/fix
 # 2. Create every file from section 7 (package.json first)
 
 # 3. Install
-npm install @rolandjlevy/css-ghost
+npm install css-ghost
 npm install --save-dev typescript esbuild "@types/node@^20" @vscode/vsce
 npm install --save-dev --save-exact @types/vscode@1.85.0   # must NOT exceed engines.vscode, see section 11
 
@@ -172,7 +172,7 @@ npm run typecheck
 npm test
 ```
 
-Versions that resolved on 16 Oct 2026 (the `package.json` in section 7 records the exact ranges): `@rolandjlevy/css-ghost ^1.0.4`, `typescript ^7.0.2`, `esbuild ^0.28.2`, `@vscode/vsce ^4.0.0`, `@types/node ^20.19.43`, `@types/vscode 1.85.0` (pinned).
+Versions that resolved on 16 Oct 2026 (the `package.json` in section 7 records the exact ranges): `css-ghost ^1.0.4`, `typescript ^7.0.2`, `esbuild ^0.28.2`, `@vscode/vsce ^4.0.0`, `@types/node ^20.19.43`, `@types/vscode 1.85.0` (pinned).
 
 ---
 
@@ -293,7 +293,7 @@ These are the exact files used for the tested v0.1.0 build.
     "package": "vsce package"
   },
   "dependencies": {
-    "@rolandjlevy/css-ghost": "^1.0.4"
+    "css-ghost": "^1.0.4"
   },
   "devDependencies": {
     "@types/node": "^20.19.43",
@@ -408,7 +408,7 @@ export type WorkerResponse =
 // Type declarations for the (untyped, plain-JS) css-ghost core package.
 // The extension deep-imports src/scanner.js so it reuses the exact CLI logic.
 
-declare module '@rolandjlevy/css-ghost/src/scanner.js' {
+declare module 'css-ghost/src/scanner.js' {
   export interface CoreOrphan {
     name: string;
     /** 1-based line number. */
@@ -480,7 +480,7 @@ export function locate(lineText: string, name: string, kind: StyleKind): [number
  */
 import { parentPort, workerData } from 'node:worker_threads';
 import { readFileSync } from 'node:fs';
-import { scan } from '@rolandjlevy/css-ghost/src/scanner.js';
+import { scan } from 'css-ghost/src/scanner.js';
 import { locate, styleKindFor } from './locate';
 import type { FileResult, ScanOutput, WorkerRequest, WorkerResponse } from './types';
 
@@ -1019,7 +1019,7 @@ dist/
 
 - Initial scaffold: inline diagnostics, hover tooltip, gutter icon, Problems panel entries,
   `css-ghost: Scan workspace` command, auto-scan on save.
-- Reuses the scan logic from `@rolandjlevy/css-ghost` (runs in a worker thread).
+- Reuses the scan logic from `css-ghost` (runs in a worker thread).
 ````
 
 ### `README.md` (Marketplace page)
@@ -1029,7 +1029,7 @@ dist/
 
 Find orphaned CSS class selectors — defined in your style files but never referenced in your components — without leaving the editor.
 
-Powered by the same scan logic as the [`@rolandjlevy/css-ghost`](https://www.npmjs.com/package/@rolandjlevy/css-ghost) CLI.
+Powered by the same scan logic as the [`css-ghost`](https://www.npmjs.com/package/css-ghost) CLI.
 
 ## Features
 
@@ -1311,7 +1311,7 @@ Pre-flight:
 ### Releasing updates
 
 - Bump `version` in `package.json` and add a `CHANGELOG.md` entry.
-- If the core changed, raise the `@rolandjlevy/css-ghost` dependency range and run `npm install`. Publishing the CLI to npm does not update the extension by itself.
+- If the core changed, raise the `css-ghost` dependency range and run `npm install`. Publishing the CLI to npm does not update the extension by itself.
 - Pre-release channel: `vsce publish --pre-release`. Only `major.minor.patch` versions are supported (no semver pre-release tags), pre-release and release versions must differ, and the common convention is odd minor for pre-release, even for release.
 - A GitHub Actions workflow that runs `npm test` and then `vsce publish` on a tag is a sensible next step. See <https://code.visualstudio.com/api/working-with-extensions/continuous-integration>.
 
@@ -1339,7 +1339,7 @@ Pre-flight:
 
 **Packaging and API**
 
-- Add a proper programmatic entry point or `"exports"` map to the CLI package (for example `import { scan } from '@rolandjlevy/css-ghost'`), and update `core.d.ts` / the deep import to match. Consider shipping `.d.ts` types from the core so `core.d.ts` can be deleted.
+- Add a proper programmatic entry point or `"exports"` map to the CLI package (for example `import { scan } from 'css-ghost'`), and update `core.d.ts` / the deep import to match. Consider shipping `.d.ts` types from the core so `core.d.ts` can be deleted.
 - Replace the placeholder icon with real branding. Add a Marketplace banner colour and screenshots/GIF to the README.
 
 ---
@@ -1359,7 +1359,7 @@ Pre-flight:
 This document goes in `docs/`. The extension itself needs a home, and either works:
 
 - **A. Separate repo** (for example `rolandjlevy/css-ghost-vscode`). Cleanest for Marketplace publishing and its own CI. Depends on the CLI through npm.
-- **B. Subfolder of the existing repo** (for example `vscode-extension/`). The CLI's `package.json` has `"files": ["bin", "src", "README.md"]`, so a subfolder would not leak into the npm package. The extension could depend on the local core via `"@rolandjlevy/css-ghost": "file:.."`, but be aware that `vsce` and esbuild bundling then follow a symlink, so test `npm run package` after switching. Publish the extension and the CLI on independent versions.
+- **B. Subfolder of the existing repo** (for example `vscode-extension/`). The CLI's `package.json` has `"files": ["bin", "src", "README.md"]`, so a subfolder would not leak into the npm package. The extension could depend on the local core via `"css-ghost": "file:.."`, but be aware that `vsce` and esbuild bundling then follow a symlink, so test `npm run package` after switching. Publish the extension and the CLI on independent versions.
 
 If you pick B, adjust the `repository` field to include `"directory": "vscode-extension"`.
 
@@ -1369,7 +1369,7 @@ If you pick B, adjust the `repository` field to include `"directory": "vscode-ex
 
 > You are continuing work on **css-ghost for VS Code** (publisher `rolandjlevy`, v0.1.0). Read `docs/vscode-extension.md` fully first; it contains the architecture, every source file, and the test plan.
 >
-> **Context:** the extension wraps the existing `@rolandjlevy/css-ghost` npm package (`scan(dirs)` from `src/scanner.js`, synchronous, returns `{ filePath, total, orphaned: [{ name, line, rule }], hasDynamic, dynamicFiles }[]`). The scan runs in a worker thread (`src/worker.ts`), results become `vscode.Diagnostic`s plus gutter decorations and a hover provider (`src/extension.ts`). Built with esbuild to CJS.
+> **Context:** the extension wraps the existing `css-ghost` npm package (`scan(dirs)` from `src/scanner.js`, synchronous, returns `{ filePath, total, orphaned: [{ name, line, rule }], hasDynamic, dynamicFiles }[]`). The scan runs in a worker thread (`src/worker.ts`), results become `vscode.Diagnostic`s plus gutter decorations and a hover provider (`src/extension.ts`). Built with esbuild to CJS.
 >
 > **First tasks, in order:**
 > 1. Recreate the project from section 7 (or use the provided `css-ghost-vscode.zip`), run `npm install && npm test`, and confirm four passing tests.
@@ -1389,7 +1389,7 @@ If you pick B, adjust the `repository` field to include `"directory": "vscode-ex
 **Project**
 
 - css-ghost repository: <https://github.com/rolandjlevy/css-ghost>
-- css-ghost on npm: <https://www.npmjs.com/package/@rolandjlevy/css-ghost>
+- css-ghost on npm: <https://www.npmjs.com/package/css-ghost>
 - Originating Claude Code session: <https://claude.ai/code/session_019BY5HrQAPx5us3xptNu3h9>
 
 **Publishing**
