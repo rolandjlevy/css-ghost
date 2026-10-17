@@ -4,6 +4,20 @@ All notable changes to `@rolandjlevy/css-ghost` are documented here.
 
 ---
 
+## [1.3.0] — 2026-10-17
+
+### Added
+
+- **Programmatic API** (`src/index.js`) — `scan()` and `generateReport()` are now exposed as the package's public entry point via the `exports` field. Other tools and build plugins can now depend on css-ghost directly.
+- **TypeScript types** (`index.d.ts`) — hand-authored declarations for `ScanResult`, `OrphanedItem`, `GhostTrail`, and `ReportTotals`; no `@types/` package needed.
+- **GitHub Actions CI** (`.github/workflows/ci.yml`) — runs the smoke test suite on Node 18, 20 and 22 on every push and pull request.
+- **Smoke test runner** (`test/run.js`) — `npm test` now runs `scan()` against all 13 fixture directories and asserts result shapes; 13/13 pass.
+- **README badges** — npm version, monthly downloads, CI status, Node version and licence badge at the top of the README.
+- **Programmatic API docs** — new README section with install instructions, usage example, and TypeScript note.
+- **Keywords expanded** — added `vite`, `webpack`, `postcss`, `css-variables`, `vanilla-extract`, `orphaned-selectors` for better npm discovery.
+
+---
+
 ## [1.2.0] — 2026-10-17
 
 ### Fixed
