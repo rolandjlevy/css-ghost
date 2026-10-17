@@ -20,7 +20,7 @@ Scans one or more directories for style files, extracts every class selector def
 
 ## Example output
 
-![css-ghost demo](./docs/demo.gif)
+![css-ghost demo](./docs/article/demo.gif)
 
 When a component uses dynamic class access (`styles[variant]`), the file is flagged rather than reporting false positives:
 
