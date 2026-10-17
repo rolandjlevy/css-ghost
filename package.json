@@ -1,6 +1,6 @@
 {
   "name": "@rolandjlevy/css-ghost",
-  "version": "1.3.0",
+  "version": "1.3.1",
   "description": "Find and remove unused CSS selectors and orphaned CSS custom properties — a CLI linter and auditor for React, Vue, Svelte, SCSS, and CSS Modules",
   "type": "module",
   "exports": {

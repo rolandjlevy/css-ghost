@@ -4,7 +4,7 @@ All notable changes to `@rolandjlevy/css-ghost` are documented here.
 
 ---
 
-## [1.3.0] — 2026-10-17
+## [1.3.1] — 2026-10-17
 
 ### Added
 
