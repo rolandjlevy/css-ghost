@@ -10,8 +10,8 @@ export default {
   dirs: ['./src'],
 
   // Where to write the orphan report.
-  // Equivalent to: css-ghost --output reports/orphan-report.md
-  output: 'reports/orphan-report.md',
+  // Equivalent to: css-ghost --output orphan-report.md
+  output: 'orphan-report.md',
 
   // Directory names to skip — additive on top of the built-in list.
   // Built-in: node_modules, .git, dist, build, .next, out, coverage, .cache
