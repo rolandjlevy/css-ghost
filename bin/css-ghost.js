@@ -7,6 +7,7 @@ import { generateReport } from '../src/reporter.js';
 import { deleteOrphans } from '../src/deleter.js';
 import { runSetup } from '../src/setup.js';
 import { getAiSummary } from '../src/ai.js';
+import { loadConfig, mergeConfig } from '../src/config.js';
 
 const args = process.argv.slice(2);
 
@@ -34,6 +35,19 @@ Usage:
 
   When no directory is given, an interactive folder picker opens.
 
+Config file:
+  css-ghost.config.js   (ESM export, takes priority)
+  .css-ghostrc.json     (JSON fallback)
+
+  Example css-ghost.config.js:
+    export default {
+      dirs:       ['./src'],
+      output:     'reports/orphans.md',
+      ignore:     ['legacy', 'vendor'],
+      strict:     false,
+      ghostTrail: false,
+    };
+
 Options:
   --output <file>    Output report file path (default: orphan-report.md)
   --delete           Delete all orphaned selectors from source files (prompts first)
@@ -44,6 +58,8 @@ Options:
   --ai               Append an AI-generated summary to the report
   --setup            Save your OpenRouter API key for use with --ai
   -h, --help         Show this help message
+
+  CLI flags always override config file values.
 
 Examples:
   css-ghost                          # interactive folder picker
@@ -60,35 +76,55 @@ Examples:
   process.exit(0);
 }
 
-// Parse flags
-const useAi       = args.includes('--ai');
-const doDelete    = args.includes('--delete');
-const skipConfirm = args.includes('--yes') || args.includes('-y');
-const strict      = args.includes('--strict');
-const ghostTrail  = args.includes('--ghost-trail');
-const outputIdx   = args.indexOf('--output');
-const outputPath  = outputIdx !== -1 ? args[outputIdx + 1] : 'orphan-report.md';
+// ── Load config file ─────────────────────────────────────────────────────────
+const { config, configPath } = await loadConfig();
 
-if (outputIdx !== -1 && !outputPath) {
+// ── Parse CLI flags ──────────────────────────────────────────────────────────
+const cliUseAi       = args.includes('--ai');
+const cliDoDelete    = args.includes('--delete');
+const cliSkipConfirm = args.includes('--yes') || args.includes('-y');
+const cliStrict      = args.includes('--strict');
+const cliGhostTrail  = args.includes('--ghost-trail');
+const outputIdx      = args.indexOf('--output');
+const cliOutputPath  = outputIdx !== -1 ? args[outputIdx + 1] : null;
+
+if (outputIdx !== -1 && !cliOutputPath) {
   console.error('❌ --output requires a file path');
   process.exit(1);
 }
 
-// Remaining positional args are directories (strip flags and their values)
-const rawDirs = args.filter((a, i) =>
+// Positional args → candidate CLI dirs (strip flags and their values)
+const cliRawDirs = args.filter((a, i) =>
   !a.startsWith('-') && (outputIdx === -1 || i !== outputIdx + 1)
 );
 
-// No directories given → launch interactive picker
+// ── Merge CLI + config (CLI wins) ────────────────────────────────────────────
+const opts = mergeConfig(
+  {
+    dirs:        cliRawDirs,
+    output:      cliOutputPath,
+    strict:      cliStrict      || undefined,
+    ghostTrail:  cliGhostTrail  || undefined,
+    ai:          cliUseAi       || undefined,
+    doDelete:    cliDoDelete    || undefined,
+    skipConfirm: cliSkipConfirm || undefined,
+  },
+  config,
+);
+
+const { output: outputPath, strict, ghostTrail, ai: useAi, doDelete, skipConfirm, ignore } = opts;
+
+// ── Resolve directories ───────────────────────────────────────────────────────
 let dirs;
-if (rawDirs.length === 0) {
+
+if (opts.dirs.length === 0) {
+  // No dirs from CLI or config → interactive picker
   const { pickDirectories } = await import('../src/picker.js');
   dirs = await pickDirectories();
   console.log('');
 } else {
-  // Validate provided directories exist
   dirs = [];
-  for (const d of rawDirs) {
+  for (const d of opts.dirs) {
     const resolved = resolve(d);
     if (!fsExists(resolved)) {
       console.error(`❌ Directory not found: ${d}`);
@@ -98,11 +134,18 @@ if (rawDirs.length === 0) {
   }
 }
 
+// ── Run ───────────────────────────────────────────────────────────────────────
+if (configPath) {
+  const rel = configPath.replace(process.cwd() + '/', '');
+  console.log(`\n⚙️  Using config: ${rel}`);
+}
+
 console.log(`\n👻 css-ghost scanning ${dirs.length} director${dirs.length === 1 ? 'y' : 'ies'}...`);
 dirs.forEach(d => console.log(`   📁 ${d}`));
+if (ignore.length) console.log(`   🚫 Ignoring: ${ignore.join(', ')}`);
 console.log('');
 
-const results = scan(dirs);
+const results = scan(dirs, { ignore });
 
 if (results.length === 0) {
   console.log('🔍 No style files found in the specified directories.\n');

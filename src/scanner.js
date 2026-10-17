@@ -3,12 +3,19 @@ import { extname, dirname } from 'path';
 import { walkDir } from './walker.js';
 import { parseStyleFile, parseComponentFile, isJsStyleFile } from './parser.js';
 
-export function scan(dirs) {
+/**
+ * Scan one or more directories for orphaned CSS selectors and custom properties.
+ *
+ * @param {string[]} dirs
+ * @param {object}   [options]
+ * @param {string[]} [options.ignore=[]]  Extra directory names to skip (from config).
+ */
+export function scan(dirs, { ignore = [] } = {}) {
   const allStyleFiles = [];
   const allJsCandidates = [];
 
   for (const dir of dirs) {
-    const { styleFiles, componentFiles } = walkDir(dir);
+    const { styleFiles, componentFiles } = walkDir(dir, { extraIgnore: ignore });
     allStyleFiles.push(...styleFiles);
     allJsCandidates.push(...componentFiles);
   }

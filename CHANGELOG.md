@@ -4,6 +4,20 @@ All notable changes to `css-ghost` are documented here.
 
 ---
 
+## [1.3.4] — 2026-10-17
+
+### Added
+
+- **Config file support** — css-ghost now reads `css-ghost.config.js` (ESM default export) or `.css-ghostrc.json` from the directory where it is run. CLI flags always override config file values.
+- **`dirs`** — set default scan directories so you can run `css-ghost` with no arguments from any project.
+- **`ignore`** — array of directory names to skip in addition to the built-in list (`node_modules`, `dist`, `.next`, etc.).
+- **`output`** — default report path without needing `--output` every time.
+- **`strict`, `ghostTrail`, `ai`, `delete`, `yes`** — any flag can be set in the config; CLI presence still overrides.
+- Config file path is printed at the start of each run so it's clear which config was picked up.
+- Unknown config keys produce a warning rather than silently being ignored.
+
+---
+
 ## [1.3.1] — 2026-10-17
 
 ### Added

@@ -5,7 +5,19 @@ const STYLE_EXTENSIONS = ['.css', '.scss', '.sass', '.less'];
 const COMPONENT_EXTENSIONS = new Set(['.js', '.jsx', '.ts', '.tsx', '.vue', '.svelte']);
 const IGNORE_DIRS = new Set(['node_modules', '.git', 'dist', 'build', '.next', 'out', 'coverage', '.cache']);
 
-export function walkDir(dir) {
+/**
+ * Walk `dir` recursively, collecting style files and component files.
+ *
+ * @param {string}   dir
+ * @param {object}   [options]
+ * @param {string[]} [options.extraIgnore=[]]  Additional directory names to skip
+ *                   (from the user's config file — merged with IGNORE_DIRS).
+ */
+export function walkDir(dir, { extraIgnore = [] } = {}) {
+  const ignoreDirs = extraIgnore.length
+    ? new Set([...IGNORE_DIRS, ...extraIgnore])
+    : IGNORE_DIRS;
+
   const styleFiles = [];
   const componentFiles = [];
 
@@ -18,7 +30,7 @@ export function walkDir(dir) {
     }
 
     for (const entry of entries) {
-      if (entry.name.startsWith('.') || IGNORE_DIRS.has(entry.name)) continue;
+      if (entry.name.startsWith('.') || ignoreDirs.has(entry.name)) continue;
 
       const fullPath = join(currentDir, entry.name);
 

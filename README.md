@@ -49,7 +49,7 @@ npx css-ghost ./src
 |                             | PurgeCSS                      | css-ghost        |
 | --------------------------- | ----------------------------- | ---------------- |
 | Works on source files       | ❌ Build output only          | ✅               |
-| Zero config, no build step  | ❌ Requires webpack / PostCSS | ✅               |
+| Zero config, no build step  | ❌ Requires webpack / PostCSS | ✅ (config file optional) |
 | CSS custom property orphans | ❌                            | ✅               |
 | Git history per orphan      | ❌                            | ✅               |
 | Pre-commit hook             | ❌                            | ✅               |
@@ -103,6 +103,62 @@ css-ghost [directory] [directory2] ... [options]
 | `--ai`            | Append an AI-generated summary (requires setup)      | off                |
 | `--setup`         | Save your OpenRouter API key for `--ai`              | —                  |
 | `-h, --help`      | Show help                                            | —                  |
+
+## Config file
+
+For team projects, create a `css-ghost.config.js` in your project root so you never have to pass flags on the command line:
+
+```js
+// css-ghost.config.js
+export default {
+  dirs:       ['./src', './components'],   // directories to scan (replaces positional args)
+  output:     'reports/orphan-report.md',  // where to write the report
+  ignore:     ['legacy', 'vendor'],        // directory names to skip (added to the built-in list)
+  strict:     true,                        // exit 1 when orphans found — great for CI
+  ghostTrail: false,                       // show git history per orphan
+};
+```
+
+Then just run `css-ghost` from anywhere in the project:
+
+```bash
+css-ghost
+```
+
+**JSON alternative** — if you prefer no JS in your config, use `.css-ghostrc.json` instead:
+
+```json
+{
+  "dirs": ["./src"],
+  "output": "reports/orphan-report.md",
+  "ignore": ["legacy", "vendor"],
+  "strict": true
+}
+```
+
+css-ghost looks for `css-ghost.config.js` first, then `.css-ghostrc.json`. **CLI flags always override config file values**, so you can still do one-off overrides:
+
+```bash
+css-ghost ./src/components          # scan a different dir, keep everything else from config
+css-ghost --output custom-audit.md  # one-off output path
+```
+
+**Supported config keys:**
+
+| Key          | Type       | Description                                                   | CLI equivalent  |
+| ------------ | ---------- | ------------------------------------------------------------- | --------------- |
+| `dirs`       | `string[]` | Directories to scan when none are given as CLI arguments      | positional args |
+| `output`     | `string`   | Output report file path                                       | `--output`      |
+| `ignore`     | `string[]` | Directory names to skip (additive — built-in list still applies) | —            |
+| `strict`     | `boolean`  | Exit with code 1 when orphans are found                       | `--strict`      |
+| `ghostTrail` | `boolean`  | Show last git commit per orphan                               | `--ghost-trail` |
+| `ai`         | `boolean`  | Append AI summary (requires `css-ghost --setup` first)        | `--ai`          |
+| `delete`     | `boolean`  | Delete orphans (prompts for confirmation)                     | `--delete`      |
+| `yes`        | `boolean`  | Skip the deletion prompt                                      | `--yes`         |
+
+> The built-in ignore list already covers `node_modules`, `.git`, `dist`, `build`, `.next`, `out`, `coverage`, and `.cache`. Use `ignore` to add your own on top.
+
+---
 
 ## CSS variable orphan detection
 
@@ -179,6 +235,9 @@ import { resolve } from 'path';
 // Scan one or more directories
 const results = scan([resolve(process.cwd(), 'src')]);
 
+// Skip extra directories (additive — built-in ignores still apply)
+const results = scan([resolve(process.cwd(), 'src')], { ignore: ['legacy', 'vendor'] });
+
 // Optional: write a Markdown report and get the orphan totals
 const { totalAllOrphans } = generateReport(results, 'orphan-report.md');
 
@@ -188,7 +247,7 @@ if (totalAllOrphans > 0) process.exit(1);
 
 TypeScript types are included — no `@types/` package needed.
 
-**`scan(dirs: string[])`** — returns a `ScanResult[]` array, one entry per style file. Each entry includes `filePath`, `orphaned` selectors, `orphanedVars` (CSS custom properties), `hasDynamic` flag, and more.
+**`scan(dirs: string[], options?: { ignore?: string[] })`** — returns a `ScanResult[]` array, one entry per style file. Each entry includes `filePath`, `orphaned` selectors, `orphanedVars` (CSS custom properties), `hasDynamic` flag, and more.
 
 **`generateReport(results, outputPath?, aiSummary?)`** — writes a Markdown report and prints a colour summary to the terminal. Returns `{ totalOrphaned, totalVarsOrphaned, totalAllOrphans }`.
 
