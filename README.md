@@ -20,7 +20,7 @@ Scans one or more directories for style files, extracts every class selector def
 👻 css-ghost scanning 1 directory...
    📁 src/styles
 
-📊 3 orphaned selectors · 2 orphaned CSS variables in 1 file. See: orphan-report.md
+📊 2 orphaned selectors · 2 orphaned CSS variables in 1 file. See: orphan-report.md
 💾 Potential savings: 130 B minified
 
 ✅ src/styles/layout.scss — saves ~160 B (130 B minified)
@@ -35,12 +35,6 @@ Scans one or more directories for style files, extracts every class selector def
       .deprecatedSidebar {
         width: 240px;
         position: fixed;
-      }
-
-   👻 .oldHero (line 43)
-      .oldHero {
-        height: 600px;
-        background: $danger;
       }
 
    🔮 Orphaned CSS variables:
