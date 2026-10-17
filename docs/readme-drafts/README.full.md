@@ -27,6 +27,52 @@ Scans one or more directories for style files, extracts every class selector def
 **Dynamic class detection:**
 Patterns where the class name is truly unknowable at parse time — `styles[variable]` or template literals containing `${}` — are flagged with a ⚠️ warning. All statically resolvable patterns (string literals, ternaries, object keys) are analysed without warnings.
 
+## Example output
+
+```
+👻 css-ghost scanning 1 directory...
+   📁 src/styles
+
+📊 2 orphaned selectors · 2 orphaned CSS variables in 1 file. See: orphan-report.md
+💾 Potential savings: 130 B minified
+
+✅ src/styles/layout.scss — saves ~160 B (130 B minified)
+
+   👻 .legacyNav (line 33)
+      .legacyNav {
+        display: flex;
+        background: #ccc;
+      }
+
+   👻 .deprecatedSidebar (line 38)
+      .deprecatedSidebar {
+        width: 240px;
+        position: fixed;
+      }
+
+   🔮 Orphaned CSS variables:
+
+   🔮 --primary-color (line 50)
+      --primary-color: #4f46e5;
+
+   🔮 --unused-token (line 51)
+      --unused-token: #aabbcc;
+```
+
+When a component uses dynamic class access (`styles[variant]`), the file is flagged rather than reporting false positives:
+
+```
+✅ src/components/alert.module.css
+
+   ⚠️  Dynamic class references detected — results may be incomplete.
+   Dynamic references in: src/components/Alert.jsx
+
+   👻 .hidden (line 30)
+      .hidden { display: none; }
+```
+
+---
+
 ## To enable AI features
 
 css-ghost can generate a plain English summary of your orphaned selectors using a free [OpenRouter](https://openrouter.ai) API key. Run the setup wizard once:

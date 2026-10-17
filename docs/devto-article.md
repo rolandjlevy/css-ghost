@@ -10,7 +10,7 @@ You've been there. You rename a component, move a file, or quietly migrate from 
 
 [css-ghost](https://www.npmjs.com/package/@rolandjlevy/css-ghost) is a small Node.js CLI I built to solve exactly that. Point it at a folder and it tells you every CSS class defined in your style files that isn't referenced anywhere in your components.
 
-![css-ghost terminal demo](./demo.gif)
+![css-ghost terminal demo](https://raw.githubusercontent.com/rolandjlevy/css-ghost/main/docs/demo.gif)
 
 ---
 

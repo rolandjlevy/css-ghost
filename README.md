@@ -16,36 +16,6 @@ Scans one or more directories for style files, extracts every class selector def
 
 ![css-ghost demo](./docs/demo.gif)
 
-```
-👻 css-ghost scanning 1 directory...
-   📁 src/styles
-
-📊 2 orphaned selectors · 2 orphaned CSS variables in 1 file. See: orphan-report.md
-💾 Potential savings: 130 B minified
-
-✅ src/styles/layout.scss — saves ~160 B (130 B minified)
-
-   👻 .legacyNav (line 33)
-      .legacyNav {
-        display: flex;
-        background: #ccc;
-      }
-
-   👻 .deprecatedSidebar (line 38)
-      .deprecatedSidebar {
-        width: 240px;
-        position: fixed;
-      }
-
-   🔮 Orphaned CSS variables:
-
-   🔮 --primary-color (line 50)
-      --primary-color: #4f46e5;
-
-   🔮 --unused-token (line 51)
-      --unused-token: #aabbcc;
-```
-
 When a component uses dynamic class access (`styles[variant]`), the file is flagged rather than reporting false positives:
 
 ```
