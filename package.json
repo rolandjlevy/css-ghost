@@ -3,6 +3,11 @@
   "version": "1.2.0",
   "description": "Find and remove unused CSS selectors and orphaned CSS custom properties — a CLI linter and auditor for React, Vue, Svelte, SCSS, and CSS Modules",
   "type": "module",
+  "exports": {
+    ".": "./src/index.js"
+  },
+  "main": "./src/index.js",
+  "types": "./index.d.ts",
   "bin": {
     "css-ghost": "bin/css-ghost.js"
   },
@@ -12,11 +17,13 @@
     "scan:trail": "node bin/css-ghost.js ./test --ghost-trail",
     "delete": "node bin/css-ghost.js ./test --delete",
     "delete:yes": "node bin/css-ghost.js ./test --delete --yes",
-    "setup": "node bin/css-ghost.js --setup"
+    "setup": "node bin/css-ghost.js --setup",
+    "test": "node test/run.js"
   },
   "files": [
     "bin",
     "src",
+    "index.d.ts",
     "README.md",
     "CHANGELOG.md",
     "LICENSE"
@@ -25,6 +32,7 @@
     "css",
     "unused",
     "orphan",
+    "orphaned-selectors",
     "selectors",
     "dead-code",
     "cleanup",
@@ -33,18 +41,24 @@
     "audit",
     "tree-shaking",
     "custom-properties",
+    "css-variables",
     "react",
     "vue",
     "svelte",
     "scss",
     "css-modules",
-    "purgecss"
+    "purgecss",
+    "vite",
+    "webpack",
+    "postcss",
+    "vanilla-extract",
+    "style-audit"
   ],
   "author": "Roland Levy",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/rolandjlevy/css-ghost.git"
+    "url": "git+https://github.com/rolandjlevy/css-ghost.git"
   },
   "homepage": "https://github.com/rolandjlevy/css-ghost#readme",
   "engines": {
