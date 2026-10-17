@@ -1,5 +1,11 @@
 # 👻 css-ghost
 
+[![npm version](https://img.shields.io/npm/v/@rolandjlevy/css-ghost.svg)](https://www.npmjs.com/package/@rolandjlevy/css-ghost)
+[![npm downloads](https://img.shields.io/npm/dm/@rolandjlevy/css-ghost.svg)](https://www.npmjs.com/package/@rolandjlevy/css-ghost)
+[![CI](https://github.com/rolandjlevy/css-ghost/actions/workflows/ci.yml/badge.svg)](https://github.com/rolandjlevy/css-ghost/actions/workflows/ci.yml)
+[![Node.js >=18](https://img.shields.io/node/v/@rolandjlevy/css-ghost.svg)](https://nodejs.org/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+
 Find and remove unused CSS selectors and orphaned CSS custom properties — selectors defined in your style files but never referenced in your components, across React, Vue, Svelte, SCSS, and CSS Modules
 
 ## What it does
@@ -157,6 +163,34 @@ css-ghost ./src ./components ./pages   # scan multiple directories
 css-ghost ./src --ai                   # with AI summary
 css-ghost ./src --output ./reports/audit.md
 ```
+
+## Programmatic API
+
+Use css-ghost as a library inside your own build tools, Vite plugins, or scripts:
+
+```bash
+npm install @rolandjlevy/css-ghost
+```
+
+```js
+import { scan, generateReport } from '@rolandjlevy/css-ghost';
+import { resolve } from 'path';
+
+// Scan one or more directories
+const results = scan([resolve(process.cwd(), 'src')]);
+
+// Optional: write a Markdown report and get the orphan totals
+const { totalAllOrphans } = generateReport(results, 'orphan-report.md');
+
+// Use in CI: fail the build if any orphans are found
+if (totalAllOrphans > 0) process.exit(1);
+```
+
+TypeScript types are included — no `@types/` package needed.
+
+**`scan(dirs: string[])`** — returns a `ScanResult[]` array, one entry per style file. Each entry includes `filePath`, `orphaned` selectors, `orphanedVars` (CSS custom properties), `hasDynamic` flag, and more.
+
+**`generateReport(results, outputPath?, aiSummary?)`** — writes a Markdown report and prints a colour summary to the terminal. Returns `{ totalOrphaned, totalVarsOrphaned, totalAllOrphans }`.
 
 ## Using with npm scripts
 
