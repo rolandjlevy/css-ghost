@@ -1,0 +1,52 @@
+/* SCSS fixture — tests nested rules, variables, and orphan detection */
+
+$primary: #4f46e5;
+$danger: #ef4444;
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 16px;
+
+  &__header {
+    font-weight: 600;
+  }
+}
+
+/* Used in layout.jsx */
+.navbar {
+  display: flex;
+  align-items: center;
+  height: 56px;
+}
+
+.navLink {
+  color: $primary;
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+/* These three are orphaned — no component references them */
+.legacyNav {
+  display: flex;
+  background: #ccc;
+}
+
+.deprecatedSidebar {
+  width: 240px;
+  position: fixed;
+}
+
+.oldHero {
+  height: 600px;
+  background: $danger;
+}
+
+/* CSS custom properties inside SCSS */
+:root {
+  --scss-primary: #{$primary};
+  --scss-unused-token: #aabbcc;
+}

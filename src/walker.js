@@ -2,7 +2,7 @@ import { readdirSync } from 'fs';
 import { join, extname, basename } from 'path';
 
 const STYLE_EXTENSIONS = ['.css', '.scss', '.sass', '.less'];
-const COMPONENT_EXTENSIONS = new Set(['.js', '.jsx', '.ts', '.tsx']);
+const COMPONENT_EXTENSIONS = new Set(['.js', '.jsx', '.ts', '.tsx', '.vue', '.svelte']);
 const IGNORE_DIRS = new Set(['node_modules', '.git', 'dist', 'build', '.next', 'out', 'coverage', '.cache']);
 
 export function walkDir(dir) {

@@ -53,6 +53,58 @@ export function extractVarUsages(content) {
 
 // ─── CSS / SCSS selector extraction ────────────────────────────────────────
 
+/**
+ * Parse SASS indented syntax (.sass) — no braces, indentation defines blocks.
+ * Class selectors appear at the start of a line (after optional whitespace),
+ * followed by indented property lines.
+ */
+function extractSassIndentedSelectors(content) {
+  const selectors = new Map();
+  const lines = content.split('\n');
+
+  // Strip // single-line comments (SASS uses // as well as /* */)
+  const stripped = content
+    .replace(/\/\*[\s\S]*?\*\//g, m => m.replace(/[^\n]/g, ' '))
+    .split('\n')
+    .map(l => l.replace(/\/\/.*$/, ''));
+
+  let i = 0;
+  while (i < stripped.length) {
+    const raw = stripped[i];
+    const trimmed = raw.trimStart();
+    const indent = raw.length - trimmed.length;
+
+    // A class selector: zero or shallow indent, starts with "."
+    if (indent === 0 && trimmed.startsWith('.')) {
+      const m = trimmed.match(/^\.([a-zA-Z_-][a-zA-Z0-9_-]*)/);
+      if (m) {
+        const name = m[1];
+        const lineNum = i + 1;
+        // Collect the rule block: this line + indented lines that follow
+        const ruleLines = [lines[i]];
+        let j = i + 1;
+        while (j < lines.length) {
+          const nextRaw = stripped[j];
+          if (nextRaw.trim() === '') { j++; continue; }
+          const nextIndent = nextRaw.length - nextRaw.trimStart().length;
+          if (nextIndent > indent) {
+            ruleLines.push(lines[j]);
+            j++;
+          } else {
+            break;
+          }
+        }
+        if (!selectors.has(name)) {
+          selectors.set(name, { line: lineNum, rule: ruleLines.join('\n').trim() });
+        }
+      }
+    }
+    i++;
+  }
+
+  return selectors;
+}
+
 function extractCssSelectors(content) {
   const selectors = new Map(); // name → { line, rule }
   const lines = content.split('\n');
@@ -324,11 +376,21 @@ export function parseStyleFile(filePath) {
   const content = readFileSync(filePath, 'utf-8');
   const ext = extname(filePath);
 
-  if (['.css', '.scss', '.sass', '.less'].includes(ext)) {
+  if (['.css', '.scss', '.less'].includes(ext)) {
     return {
       selectors: extractCssSelectors(content),
       cssVars:   extractCssVarDefinitions(content),
       varUsages: extractVarUsages(content), // vars used within this style file itself
+      hasDynamic: false,
+    };
+  }
+
+  // SASS indented syntax — no braces; needs its own parser branch
+  if (ext === '.sass') {
+    return {
+      selectors: extractSassIndentedSelectors(content),
+      cssVars:   extractCssVarDefinitions(content),
+      varUsages: extractVarUsages(content),
       hasDynamic: false,
     };
   }

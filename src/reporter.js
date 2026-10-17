@@ -197,7 +197,7 @@ export function generateReport(results, outputPath = 'orphan-report.md', aiSumma
   }
 
   for (const result of results) {
-    const { orphaned, orphanedVars = [], trails, varTrails } = result;
+    const { orphaned, orphanedVars = [], trails, varTrails, hasDynamic, dynamicFiles } = result;
     if (orphaned.length === 0 && orphanedVars.length === 0) continue;
 
     const relPath = relative(process.cwd(), result.filePath);
@@ -206,6 +206,17 @@ export function generateReport(results, outputPath = 'orphan-report.md', aiSumma
       ? pc.dim(` — saves ~${formatBytes(s.raw)} (${formatBytes(s.min)} minified)`)
       : '';
     console.log(`✅ ${pc.bold(relPath)}${savingsSuffix}\n`);
+
+    if (hasDynamic) {
+      console.log(`   ${pc.yellow('⚠️  Dynamic class references detected — results may be incomplete.')}`);
+      if (dynamicFiles?.length > 0) {
+        const relDynamic = dynamicFiles
+          .map(f => `${relative(process.cwd(), f)}`)
+          .join(', ');
+        console.log(pc.dim(`   Dynamic references in: ${relDynamic}`));
+      }
+      console.log('');
+    }
 
     orphaned.forEach(({ name, line, rule }) => {
       console.log(`   👻 ${pc.yellow('.' + name)} ${pc.dim(`(line ${line})`)}`);

@@ -1,5 +1,5 @@
 import { readFileSync } from 'fs';
-import { extname } from 'path';
+import { extname, dirname } from 'path';
 import { walkDir } from './walker.js';
 import { parseStyleFile, parseComponentFile, isJsStyleFile } from './parser.js';
 
@@ -75,6 +75,12 @@ export function scan(dirs) {
   }
 
   // ── PASS 3: Cross-reference and build results ─────────────────────────────
+  // Build a Set of directories that contain dynamic components, so we can
+  // scope the hasDynamic flag to style files that share a directory — rather
+  // than tagging every style file in the entire scan when just one component
+  // anywhere uses dynamic class access.
+  const dynamicDirs = new Set(dynamicComponentFiles.map(f => dirname(f)));
+
   const results = [];
 
   for (const styleFile of styleFiles) {
@@ -82,6 +88,13 @@ export function scan(dirs) {
     if (!parsed) continue;
 
     const { selectors, cssVars, hasDynamic } = parsed;
+    const styleDir = dirname(styleFile);
+
+    // Only the dynamic components co-located with this style file are relevant
+    const localDynamicFiles = dynamicComponentFiles.filter(
+      f => dirname(f) === styleDir
+    );
+    const localHasDynamic = hasDynamic || dynamicDirs.has(styleDir);
 
     // Orphaned class selectors
     const orphaned = [...selectors.entries()]
@@ -101,8 +114,8 @@ export function scan(dirs) {
       orphaned,
       orphanedVars,
       totalVars: cssVars?.size ?? 0,
-      hasDynamic: hasDynamic || dynamicComponentFiles.length > 0,
-      dynamicFiles: dynamicComponentFiles,
+      hasDynamic: localHasDynamic,
+      dynamicFiles: localDynamicFiles,
     });
   }
 
