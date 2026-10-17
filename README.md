@@ -1,9 +1,9 @@
 # 👻 css-ghost
 
-[![npm version](https://img.shields.io/npm/v/@rolandjlevy/css-ghost.svg)](https://www.npmjs.com/package/@rolandjlevy/css-ghost)
-[![npm downloads](https://img.shields.io/npm/dm/@rolandjlevy/css-ghost.svg)](https://www.npmjs.com/package/@rolandjlevy/css-ghost)
+[![npm version](https://img.shields.io/npm/v/css-ghost.svg)](https://www.npmjs.com/package/css-ghost)
+[![npm downloads](https://img.shields.io/npm/dm/css-ghost.svg)](https://www.npmjs.com/package/css-ghost)
 [![CI](https://github.com/rolandjlevy/css-ghost/actions/workflows/ci.yml/badge.svg)](https://github.com/rolandjlevy/css-ghost/actions/workflows/ci.yml)
-[![Node.js >=18](https://img.shields.io/node/v/@rolandjlevy/css-ghost.svg)](https://nodejs.org/)
+[![Node.js >=18](https://img.shields.io/node/v/css-ghost.svg)](https://nodejs.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 Find and remove unused CSS selectors and orphaned CSS custom properties — selectors defined in your style files but never referenced in your components, across React, Vue, Svelte, SCSS, and CSS Modules
