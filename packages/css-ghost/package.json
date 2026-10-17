@@ -11,6 +11,9 @@
   "bin": {
     "css-ghost": "bin/run.js"
   },
+  "scripts": {
+    "prepublishOnly": "node scripts/sync-readme.js"
+  },
   "files": [
     "bin",
     "index.js",

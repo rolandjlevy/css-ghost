@@ -2,3 +2,4 @@ node_modules/
 orphan-report.md
 *.log
 .DS_Store
+packages/css-ghost/README.md
