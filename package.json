@@ -61,6 +61,9 @@
     "url": "git+https://github.com/rolandjlevy/css-ghost.git"
   },
   "homepage": "https://github.com/rolandjlevy/css-ghost#readme",
+  "bugs": {
+    "url": "https://github.com/rolandjlevy/css-ghost/issues"
+  },
   "engines": {
     "node": ">=18"
   },
