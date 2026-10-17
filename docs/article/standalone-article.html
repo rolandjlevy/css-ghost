@@ -539,7 +539,7 @@ tr:last-child td { border-bottom: none; }
       <time datetime="2026-10-17">Oct 17, 2026</time>
     </div>
     <h1>css-ghost: find and delete orphaned CSS selectors with zero config</h1>
-    <p class="deck">A zero-config Node.js CLI that cross-references your style files against your components and flags every selector nobody is using — with line numbers, the actual CSS, and an optional auto-delete.</p>
+    <p class="deck">A zero-config Node.js CLI that cross-references your style files against your components and flags every selector nobody is using – with line numbers, the actual CSS, and an optional auto-delete.</p>
   </header>
 
   <div class="terminal" aria-label="css-ghost terminal demo">
@@ -553,14 +553,14 @@ tr:last-child td { border-bottom: none; }
   </div>
 
   <article class="body">
-    <p>You've been there. You rename a component, move a file, or quietly migrate from one styling approach to another — and the old CSS stays behind. Nobody complains, the build doesn't break, and the dead selectors quietly accumulate.</p>
-    <p><a href="https://www.npmjs.com/package/css-ghost" target="_blank" rel="noopener">css-ghost</a> is a small Node.js CLI I built to solve exactly that. Point it at a folder and it tells you every CSS class defined in your style files that isn't referenced anywhere in your components.</p>
+    <p>You've been there. You rename a component, move a file, or quietly migrate from one styling approach to another – and the old CSS stays behind. Nobody complains, the build doesn't break, and the dead selectors quietly accumulate.</p>
+    <p><a href="https://www.npmjs.com/package/css-ghost" target="_blank" rel="noopener">css-ghost</a> is a small Node.js CLI tool I built to solve that problem. Point it at a folder and it tells you every CSS class defined in your style files that isn't referenced anywhere in your components.</p>
 
     <hr>
 
     <h2>What it does</h2>
     <p>css-ghost scans your style files (<code>.css</code>, <code>.module.css</code>, <code>.scss</code>, <code>.sass</code>, <code>.less</code>, MUI <code>makeStyles</code>, vanilla-extract), extracts every class selector, then cross-references them against every component file it can find (<code>.js</code>, <code>.jsx</code>, <code>.ts</code>, <code>.tsx</code>, <code>.vue</code>, <code>.svelte</code>).</p>
-    <p>Anything defined but never used gets reported as an orphan — with its line number and the full CSS rule printed inline, so you can see what it does before deciding to delete it.</p>
+    <p>Anything defined but never actually used gets reported as an orphan – with its line number and the full CSS rule printed inline, so you can see what it does before deciding to delete it.</p>
     <p>It also catches <strong>orphaned CSS custom properties</strong> (<code>--my-token: value</code> defined but never consumed via <code>var(--my-token)</code> anywhere in the codebase), reported in a separate 🔮 section.</p>
 
     <hr>
@@ -574,8 +574,15 @@ css-ghost ./src</code></pre>
 
     <hr>
 
+    <h2>Interactive folder picker</h2>
+    <p>Run <code>css-ghost</code> with no arguments and an interactive directory picker opens. Navigate with <code>↑↓</code> (or <code>j/k</code>), press <code>Enter</code> or <code>→</code> to go into a folder, <code>←</code> to go back up, <code>[a]</code> to add the current directory to the scan, then <code>[d]</code> when done:</p>
+    <pre><code>css-ghost</code></pre>
+    <p>Useful when you're not sure which subfolder to target, or want to scan multiple directories in one pass.</p>
+
+    <hr>
+
     <h2>Dynamic class detection</h2>
-    <p>If a component accesses classes dynamically — <code>styles[variable]</code>, <code>styles[`${variant}`]</code> — css-ghost can't resolve the class name statically. Rather than silently skip those files or report false positives, it flags them with a ⚠️ warning per file:</p>
+    <p>If a component accesses classes dynamically – <code>styles[variable]</code>, <code>styles[`${variant}`]</code> – css-ghost can't resolve the class name statically. Rather than silently skip those files or report false positives, it flags them with a ⚠️ warning per file:</p>
     <pre class="out"><span class="g">✅</span> <span class="b">src/components/Alert/Alert.module.css</span>
 
    <span class="y">⚠️  Dynamic class references detected — results may be incomplete.</span>
@@ -616,7 +623,7 @@ css-ghost ./src</code></pre>
     <p>Pass <code>--ghost-trail</code> to fetch the last git commit that changed each orphan's occurrence count:</p>
     <pre><code>css-ghost ./src --ghost-trail</code></pre>
     <pre class="out">   👻 <span class="y">.iconRight</span> <span class="d">(line 28)</span>
-      <span class="d">🕵️  b5c6efb · Roland Levy · 3 weeks ago — "Refactor Button component"</span>
+      <span class="d">🕵️  b5c6efb · Roland Levy · 3 weeks ago – "Refactor Button component"</span>
       <span class="d">.iconRight {</span>
       <span class="d">  margin-left: 6px;</span>
       <span class="d">}</span></pre>
@@ -631,8 +638,8 @@ css-ghost ./src</code></pre>
     <hr>
 
     <h2>How is it different from PurgeCSS?</h2>
-    <p><a href="https://www.npmjs.com/package/purgecss" target="_blank" rel="noopener">PurgeCSS</a> is a <strong>build-time bundler</strong> — it hooks into webpack or PostCSS to strip unused CSS from your <em>production output</em>. It's designed for frameworks like Tailwind or Bootstrap where you use a fraction of the utility classes.</p>
-    <p>css-ghost is a <strong>source code auditor</strong> — it finds dead selectors in your <em>actual codebase</em>, with no build step and no config file.</p>
+    <p><a href="https://www.npmjs.com/package/purgecss" target="_blank" rel="noopener">PurgeCSS</a> is a <strong>build-time bundler</strong> – it hooks into webpack or PostCSS to strip unused CSS from your <em>production output</em>. It's designed for frameworks like Tailwind or Bootstrap where you use a fraction of the utility classes.</p>
+    <p>css-ghost is a <strong>source code auditor</strong> – it finds dead selectors in your <em>actual codebase</em>, with no build step and no config file.</p>
 
     <div class="tbl-wrap">
       <table class="cmp">
@@ -651,7 +658,7 @@ css-ghost ./src</code></pre>
       </table>
     </div>
 
-    <p>The two tools are complementary — PurgeCSS for trimming framework output at build time, css-ghost for auditing your own hand-written CSS throughout development.</p>
+    <p>The two tools are complementary – PurgeCSS for trimming framework output at build time, css-ghost for auditing your own hand-written CSS throughout development.</p>
 
     <p>The source is on <a href="https://github.com/rolandjlevy/css-ghost" target="_blank" rel="noopener">GitHub</a> and the package is on <a href="https://www.npmjs.com/package/css-ghost" target="_blank" rel="noopener">npm</a>. PRs and issues welcome.</p>
   </article>
