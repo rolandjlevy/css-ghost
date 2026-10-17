@@ -1,0 +1,27 @@
+/* Tests hyphenated class names accessed via bracket notation */
+
+.nav-bar {
+  display: flex;
+  height: 56px;
+}
+
+.nav-link {
+  padding: 0 12px;
+  color: inherit;
+  text-decoration: none;
+}
+
+.nav-link--active {
+  color: #4f46e5;
+  font-weight: 600;
+}
+
+/* Orphaned hyphenated selectors */
+.nav-link--disabled {
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+.nav-dropdown--open {
+  display: block;
+}

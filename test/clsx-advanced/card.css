@@ -1,0 +1,14 @@
+.card { padding: 16px; }
+.card-base { border: 1px solid #e5e7eb; }
+.elevated { box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+.highlighted { border-color: #4f46e5; }
+.card-sm { padding: 8px; }
+.card-lg { padding: 24px; }
+.rounded { border-radius: 8px; }
+.compact { font-size: 12px; }
+.tag { display: inline-block; }
+.tag-active { font-weight: 600; }
+
+/* Orphaned */
+.card-xl { padding: 32px; }
+.deprecated-card { background: #f9f9f9; }

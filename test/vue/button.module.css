@@ -1,0 +1,5 @@
+.button { padding: 8px 16px; cursor: pointer; }
+.primary { background: #4f46e5; color: white; }
+.secondary { background: transparent; border: 1px solid #4f46e5; }
+/* Orphaned */
+.ghost { opacity: 0.5; }
