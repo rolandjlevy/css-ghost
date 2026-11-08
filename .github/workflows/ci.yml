@@ -42,3 +42,9 @@ jobs:
           if (typeof generateReport !== 'function') throw new Error('generateReport must be a function');
           console.log('✅ Programmatic API exports verified');
           EOF
+
+      - name: Test the MCP server
+        working-directory: mcp
+        run: |
+          npm install --no-save --ignore-scripts @modelcontextprotocol/sdk@^1 zod@^3 ..
+          npm test

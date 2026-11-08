@@ -4,6 +4,15 @@ All notable changes to `css-ghost` are documented here.
 
 ---
 
+## [Unreleased]
+
+### Added
+
+- **`isGitRepo` and `getGhostTrails`** are now exported from the package root (and typed in `index.d.ts`), so other tools can read ghost-trail git history.
+- **`css-ghost-mcp`** (in `mcp/`): a read-only MCP server with `summarise_orphans`, `find_orphans` and `ghost_trail` tools, so AI assistants can audit unused CSS. Published separately; see `mcp/README.md`.
+
+---
+
 ## [1.3.4] — 2026-10-17
 
 ### Added

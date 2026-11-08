@@ -14,3 +14,4 @@
 
 export { scan } from './scanner.js';
 export { generateReport } from './reporter.js';
+export { isGitRepo, getGhostTrails } from './git.js';

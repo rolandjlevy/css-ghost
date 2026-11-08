@@ -55,6 +55,10 @@ export default {
 };
 ```
 
+## Use it from an AI assistant
+
+[`css-ghost-mcp`](mcp/README.md) is a read-only MCP server that lets Claude, Cursor and other assistants find unused CSS in your project, with git history for each orphan. See `mcp/README.md` for setup.
+
 ## Programmatic API
 
 ```js
