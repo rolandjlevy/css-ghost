@@ -1,0 +1,40 @@
+{
+  "name": "css-ghost-mcp",
+  "version": "0.1.0",
+  "description": "MCP server that lets AI assistants find orphaned CSS selectors and custom properties with css-ghost. Read-only.",
+  "type": "module",
+  "bin": {
+    "css-ghost-mcp": "bin/css-ghost-mcp.js"
+  },
+  "files": [
+    "bin",
+    "src",
+    "README.md"
+  ],
+  "scripts": {
+    "test": "node --test test/tools.test.js test/server.test.js"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "css",
+    "unused-css",
+    "css-ghost",
+    "ai"
+  ],
+  "author": "Roland Levy",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rolandjlevy/css-ghost.git",
+    "directory": "mcp"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.0",
+    "css-ghost": "^1.4.0",
+    "zod": "^3.23.0"
+  }
+}

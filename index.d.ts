@@ -106,3 +106,19 @@ export function generateReport(
   outputPath?: string,
   aiSummary?: string | null
 ): ReportTotals;
+
+/**
+ * Whether `cwd` is inside a git repository.
+ */
+export function isGitRepo(cwd: string): boolean;
+
+/**
+ * Find the most recent commit that changed the occurrence count of each orphan's
+ * name (`git log -S`). Pass `{ isVar: true }` for CSS custom properties.
+ * Resolves to an object keyed by name; the value is `null` when no commit is found.
+ */
+export function getGhostTrails(
+  orphans: { name: string }[],
+  cwd: string,
+  options?: { isVar?: boolean }
+): Promise<Record<string, GhostTrail | null>>;
