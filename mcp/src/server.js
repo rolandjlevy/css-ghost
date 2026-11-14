@@ -31,7 +31,7 @@ const handle = (fn) => async (args) => {
 };
 
 export function createServer({ root }) {
-  const server = new McpServer({ name: 'css-ghost', version: '0.1.0' });
+  const server = new McpServer({ name: 'css-ghost', version: '0.1.1' });
 
   server.registerTool(
     'find_orphans',

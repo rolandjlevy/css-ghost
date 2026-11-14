@@ -1,6 +1,6 @@
 {
   "name": "css-ghost-mcp",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "MCP server that lets AI assistants find orphaned CSS selectors and custom properties with css-ghost. Read-only.",
   "type": "module",
   "bin": {
