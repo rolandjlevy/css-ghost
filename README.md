@@ -6,6 +6,8 @@
 
 Find and remove unused CSS selectors and orphaned CSS custom properties: styles defined in your source but never referenced in your components. Works with React, Vue, Svelte, SCSS and CSS Modules. No build step and no config required.
 
+Use it as a **CLI**, in **CI** or a pre-commit hook, or from an **AI assistant** (Claude, Cursor, VS Code) through [`css-ghost-mcp`](#use-it-from-an-ai-assistant).
+
 ![css-ghost demo](https://raw.githubusercontent.com/rolandjlevy/css-ghost/main/docs/article/demo.gif)
 
 ## Quick start
@@ -57,12 +59,18 @@ export default {
 
 ## Use it from an AI assistant
 
-[`css-ghost-mcp`](mcp/README.md) is a read-only MCP server that lets Claude, Cursor and other assistants find unused CSS in your project, with git history for each orphan. See `mcp/README.md` for setup.
+[`css-ghost-mcp`](https://www.npmjs.com/package/css-ghost-mcp) is a read-only MCP server, so Claude, Cursor and other assistants can find unused CSS in your project and check its git history before suggesting what to remove.
+
+```bash
+claude mcp add --scope user css-ghost -- npx -y css-ghost-mcp
+```
+
+Then start `claude` from your project root and ask *"Find unused CSS in this project"*. Setup for Cursor, VS Code and Claude Desktop: [mcp/README.md](https://github.com/rolandjlevy/css-ghost/blob/main/mcp/README.md).
 
 ## Programmatic API
 
 ```js
-import { scan, generateReport } from 'css-ghost';
+import { scan, generateReport, getGhostTrails } from 'css-ghost';
 
 const results = scan(['./src'], { ignore: ['legacy'] });
 const { totalAllOrphans } = generateReport(results, 'orphan-report.md');
@@ -70,7 +78,7 @@ const { totalAllOrphans } = generateReport(results, 'orphan-report.md');
 if (totalAllOrphans > 0) process.exit(1);
 ```
 
-TypeScript types are included.
+`await getGhostTrails(orphans, cwd)` gives the last git commit that added or removed each name. TypeScript types are included.
 
 ## How is this different from PurgeCSS?
 
