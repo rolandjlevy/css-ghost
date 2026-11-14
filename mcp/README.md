@@ -16,9 +16,9 @@ claude
 ```
 
 3. Type `/mcp` and check that `css-ghost` is connected.
-4. Ask: *"Find unused CSS in this project and tell me which is safe to remove."*
+4. Ask: _"Find unused CSS in this project and tell me which is safe to remove."_
 
-Other good questions: *"Summarise unused CSS"*, *"List unused selectors in `src/components`"*, *"Which of these were removed from components recently?"*
+Other good questions: _"Summarise unused CSS"_, _"List unused selectors in `src/components`"_, _"Which of these were removed from components recently?"_
 
 <details>
 <summary><strong>Cursor</strong></summary>
@@ -26,10 +26,15 @@ Other good questions: *"Summarise unused CSS"*, *"List unused selectors in `src/
 Add to `.cursor/mcp.json` (one project) or `~/.cursor/mcp.json` (all projects):
 
 ```json
-{ "mcpServers": { "css-ghost": { "command": "npx", "args": ["-y", "css-ghost-mcp"] } } }
+{
+  "mcpServers": {
+    "css-ghost": { "command": "npx", "args": ["-y", "css-ghost-mcp"] }
+  }
+}
 ```
 
 If it scans the wrong folder, add your project's full path after `"css-ghost-mcp"`.
+
 </details>
 
 <details>
@@ -38,8 +43,17 @@ If it scans the wrong folder, add your project's full path after `"css-ghost-mcp
 Add to `.vscode/mcp.json`:
 
 ```json
-{ "servers": { "css-ghost": { "type": "stdio", "command": "npx", "args": ["-y", "css-ghost-mcp", "${workspaceFolder}"] } } }
+{
+  "servers": {
+    "css-ghost": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "css-ghost-mcp", "${workspaceFolder}"]
+    }
+  }
+}
 ```
+
 </details>
 
 <details>
@@ -48,21 +62,29 @@ Add to `.vscode/mcp.json`:
 Claude Desktop has no project folder, so give it the path. In `claude_desktop_config.json` (macOS: `~/Library/Application Support/Claude/`, Windows: `%APPDATA%\Claude\`):
 
 ```json
-{ "mcpServers": { "css-ghost": { "command": "npx", "args": ["-y", "css-ghost-mcp", "/full/path/to/your-project"] } } }
+{
+  "mcpServers": {
+    "css-ghost": {
+      "command": "npx",
+      "args": ["-y", "css-ghost-mcp", "/full/path/to/your-project"]
+    }
+  }
+}
 ```
 
 Restart Claude Desktop.
+
 </details>
 
 ## Tools
 
 The assistant picks these itself; you don't need to name them.
 
-| Tool | Returns |
-| --- | --- |
-| `summarise_orphans` | Unused counts per file and the 10 worst files. A good first look. |
-| `find_orphans` | Each unused selector and custom property with file and line (50 by default, max 200). |
-| `ghost_trail` | The last git commit that added or removed each name, to tell recent work from long-dead styles. Needs git. |
+| Tool                | Returns                                                                                                    |
+| ------------------- | ---------------------------------------------------------------------------------------------------------- |
+| `summarise_orphans` | Unused counts per file and the 10 worst files. A good first look.                                          |
+| `find_orphans`      | Each unused selector and custom property with file and line (50 by default, max 200).                      |
+| `ghost_trail`       | The last git commit that added or removed each name, to tell recent work from long-dead styles. Needs git. |
 
 **`uncertain: true`** marks results near code that builds class names at runtime (`styles[variant]`, `` `btn-${size}` ``). css-ghost can't see those usages, so check before removing.
 
